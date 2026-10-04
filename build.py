@@ -80,7 +80,7 @@ def head(S, title, desc, path, schema="", extra=""):
 def header(S):
     c = S.c
     return f'''<header class="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-ink/80 border-b border-line"><div class="max-w-7xl mx-auto px-5 h-16 flex items-center justify-between">
-<a href="/" class="flex items-center gap-2.5"><img src="/assets/logo-icon.png" width="40" height="40" alt="{c['name']} logo" class="h-10 w-10 rounded-lg logo-pulse"><span class="display block max-w-[11.5rem] sm:max-w-none text-[13px] sm:text-base font-extrabold leading-tight">{S.c['name']}</span></a>
+<a href="/" class="flex items-center gap-2.5"><img src="/assets/logo-icon.png" width="40" height="40" alt="{c['name']} logo" class="h-10 w-10 rounded-lg logo-pulse"><span class="display block max-w-[11rem] sm:max-w-none text-[11px] sm:text-base font-extrabold leading-[1.15]">{S.c['name']}</span></a>
 <nav class="hidden md:flex items-center gap-8 text-sm text-bone/70" aria-label="Main"><a href="/services/" class="hover:text-bone">Services</a><a href="/areas/" class="hover:text-bone">Service Areas</a><a href="/our-work/" class="hover:text-bone">Our Work</a><a href="/#faq" class="hover:text-bone">FAQ</a></nav>
 <div class="flex items-center gap-3"><a href="tel:{c['phone_tel']}" class="hidden sm:inline-flex text-sm font-semibold text-bone/90 hover:text-ember">{c['phone_display']}</a><a href="#quote" class="inline-flex whitespace-nowrap rounded-full bg-ember hover:bg-emberDark text-ink font-bold text-sm px-4 sm:px-5 py-2.5 transition">Free Quote</a></div></div></header>'''
 
