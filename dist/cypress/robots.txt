@@ -2,5 +2,6 @@ User-agent: *
 Allow: /
 Disallow: /crew/
 Disallow: /api/
+Disallow: /admin/
 
 Sitemap: https://junkjunkiescypress.com/sitemap.xml

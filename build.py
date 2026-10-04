@@ -10,7 +10,20 @@ ROOT = Path(__file__).parent
 TODAY = datetime.date.today().isoformat()
 YEAR = datetime.date.today().year
 SITES = {p.stem: json.loads(p.read_text()) for p in sorted((ROOT / "sites").glob("*.json"))}
+ROUTES = json.loads((ROOT / "shared" / "routes.json").read_text())
 HOME_SERVICES = ["Junk Removal", "Debris Removal", "Hoarder Cleanouts", "Appliance Removal", "Furniture Removal", "Appliance Installation", "Local Moving", "Long-Distance Moving", "Trampoline Removal", "Basketball Goal Removal"]
+
+ROUTES_JS = """// GENERATED from shared/routes.json by build.py. Do not edit.
+const SITES = """ + json.dumps(ROUTES) + """;
+const rad = d => d * Math.PI / 180;
+function miles(a, b, c, d) { const x = Math.sin(rad(c - a) / 2) ** 2 + Math.cos(rad(a)) * Math.cos(rad(c)) * Math.sin(rad(d - b) / 2) ** 2; return 3958.8 * 2 * Math.asin(Math.sqrt(x)); }
+// Nearest service city to a GPS point; null if farther than maxMiles from every city.
+export function nearest(lat, lon, maxMiles = 45) {
+  let best = null;
+  for (const [site, s] of Object.entries(SITES)) for (const [city, la, lo] of s.cities) { const d = miles(lat, lon, la, lo); if (!best || d < best.miles) best = { site, siteName: s.name, city, miles: d }; }
+  return best && best.miles <= maxMiles ? best : null;
+}
+"""
 
 def jload(p, default):
     try: return json.loads(Path(p).read_text())
@@ -182,24 +195,30 @@ def work_page(S):
 
 def crew_page(S):
     c = S.c; path = "/crew/"
-    pts = [{"n": x["name"], "lat": x["lat"], "lon": x["lon"]} for x in S.cities]
+    pts = [{"n": ct[0], "lat": ct[1], "lon": ct[2]} for r in ROUTES.values() for ct in r["cities"]]
     inp = "bg-ink border border-line rounded-xl px-4 py-3 w-full focus:outline-none focus:border-ember"
-    city_opts = "".join(f"<option>{x['name']}</option>" for x in S.cities)
+    city_opts = "".join(f'<optgroup label="{r["name"]}">' + "".join(f"<option>{ct[0]}</option>" for ct in r["cities"]) + "</optgroup>" for r in ROUTES.values())
     svc_opts = "".join(f"<option>{o}</option>" for o in HOME_SERVICES)
-    body = f"""<main class="pt-24 pb-24"><div class="max-w-xl mx-auto px-5"><h1 class="display text-3xl font-extrabold mb-2">Post a finished job</h1><p class="text-bone/60 mb-6">Crew only. Take photos at the job site and they go on the Our Work page and map for {c['name']}.</p>
+    body = f"""<main class="pt-24 pb-24"><div class="max-w-xl mx-auto px-5"><h1 class="display text-3xl font-extrabold mb-2">Post a finished job</h1><p class="text-bone/60 mb-6">Crew only. Take photos at the job site. The job is placed on the right website's map and Google profile automatically from your location.</p>
 <form id="crewForm" class="grid gap-4" data-cities='{json.dumps(pts)}'>
 <input name="pin" type="password" inputmode="numeric" placeholder="Crew PIN" autocomplete="off" required class="{inp}">
 <select name="service" required class="{inp}"><option value="">What did you haul?</option>{svc_opts}</select>
-<select name="city" required class="{inp}"><option value="">City</option>{city_opts}</select>
+<button type="button" id="gpsBtn" class="rounded-xl border border-line px-4 py-3 text-left">📍 Use my location (recommended)</button>
+<select name="city" class="{inp}"><option value="">...or pick the city</option>{city_opts}</select>
 <input name="area" placeholder="Neighborhood (optional, no street addresses)" class="{inp}">
-<button type="button" id="gpsBtn" class="rounded-xl border border-line px-4 py-3 text-left">📍 Use my location</button>
 <label class="block"><span class="text-sm text-bone/70">Before photo (optional)</span><input name="before" type="file" accept="image/*" capture="environment" class="mt-1 block w-full text-sm"></label>
 <label class="block"><span class="text-sm text-bone/70">After photo (required)</span><input name="after" type="file" accept="image/*" capture="environment" required class="mt-1 block w-full text-sm"></label>
 <textarea name="description" rows="3" maxlength="600" placeholder="1-3 sentences about the job" class="{inp}"></textarea>
-<button id="crewBtn" class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition">Post to map</button><p id="crewMsg" class="text-sm text-bone/70" role="status"></p></form><p class="text-xs text-bone/40 mt-6">Do not include customer faces, house numbers, license plates or street addresses. Pins are shown only to about 1 km.</p></div></main>"""
+<label class="flex items-center gap-3 text-sm text-bone/70"><input type="checkbox" name="gbp" checked class="accent-ember w-5 h-5"> Also post to our Google Business Profile</label>
+<button id="crewBtn" class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition">Post job</button><p id="crewMsg" class="text-sm text-bone/70" role="status"></p></form><p class="text-xs text-bone/40 mt-6">Do not include customer faces, house numbers, license plates or street addresses. Photos are posted publicly. Map pins are shown only to about 1 km.</p></div></main>"""
     S.write(path, head(S, f"Crew upload | {c['name']}", "Crew upload", path, "", '<meta name="robots" content="noindex, nofollow">').replace('<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">', "") + header(S) + body + footer(S).replace("/assets/form.js", "/assets/crew.js"))
 
-# ------------------------------------------------------------ pages
+def admin_page(S):
+    path = "/admin/"
+    names = {k: {"name": v["name"], "domain": (json.loads((ROOT / "sites" / f"{k}.json").read_text())["domain"] if (ROOT / "sites" / f"{k}.json").exists() else "junkjunkiesindiana.com")} for k, v in ROUTES.items()}
+    body = f"""<main class="pt-28 pb-24"><div class="max-w-6xl mx-auto px-5"><h1 class="display text-4xl font-extrabold mb-2">Owner dashboard</h1><p class="text-bone/60 mb-8">All sites in one place: jobs, Google posting status and quick controls. Needs the admin PIN.</p><div id="adminApp" data-sites='{json.dumps(names)}'></div></div></main>"""
+    S.write(path, head(S, "Dashboard", "Owner dashboard", path, "", '<meta name="robots" content="noindex, nofollow">').replace('<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">', "") + header(S) + body + footer(S).replace("/assets/form.js", "/assets/admin.js"))
+
 def home(S):
     c = S.c; hub = S.hub["name"]; names = [x["name"] for x in S.cities]
     others = ", ".join(names[1:-1]) + (" and " + names[-1] if len(names) > 1 else "")
@@ -281,9 +300,10 @@ def build_site(S):
     (S.out / "assets").mkdir(parents=True)
     # assets
     shutil.copy(ROOT / "shared" / "hero.webp", S.out / "assets/hero.webp")
-    for f in ["form.js", "app.js", "crew.js"]: shutil.copy(ROOT / "shared" / f, S.out / "assets" / f)
+    for f in ["form.js", "app.js", "crew.js", "admin.js"]: shutil.copy(ROOT / "shared" / f, S.out / "assets" / f)
     shutil.copytree(ROOT / "shared" / "api", S.out / "api"); shutil.copy(S.out / "api" / "package.json", S.out / "package.json"); (S.out / "api" / "package.json").unlink()
     (S.out / "api" / "_site.js").write_text(f'export default {json.dumps(S.slug)};\n')
+    (S.out / "api" / "_routes.js").write_text(ROUTES_JS)
     rd = ROOT / "data" / S.slug / "reel"
     if rd.exists(): shutil.copytree(rd, S.out / "assets/reel")
     from PIL import Image
@@ -309,14 +329,14 @@ def build_site(S):
     hub_page(S, "/areas/", f"Junk Removal Service Areas | {hub} & Nearby, TX | {c['name']}", f"We serve {', '.join(x['name'] for x in S.cities)}, Texas. Call {c['phone_display']}.", "Junk Removal Service Areas", f"Serving {', '.join(x['name'] for x in S.cities)}, Texas.", cc, "Service Areas", map_section(S), MAP_CSS)
     sc = "".join(f'<a href="{S.svc_path(s)}" class="rounded-2xl bg-slate2 border border-line p-6 hover:border-ember/60 transition"><div class="display text-ember font-extrabold mb-2">{s["icon"]}</div><h2 class="display font-bold text-xl mb-1">{s["name"]}</h2><p class="text-sm text-bone/60">{s["blurb"]}</p></a>' for s in SERVICES)
     hub_page(S, "/services/", f"Junk Removal Services {hub}, TX | {c['name']}", f"Junk removal, debris removal, hoarder cleanouts, appliance removal, moving and more in {hub}, TX. Call {c['phone_display']}.", "Our Services", "From a single couch to a whole-property cleanout.", sc, "Services")
-    work_page(S); crew_page(S)
+    work_page(S); crew_page(S); admin_page(S)
     # site files
     urls = [("/", "1.0"), ("/areas/", "0.8"), ("/services/", "0.8"), ("/our-work/", "0.6")] + [(S.svc_path(s), "0.8") for s in SERVICES] + [(S.city_path(x), "0.9" if x is S.hub else "0.7") for x in S.cities]
     (S.out / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"<url><loc>{S.base}{u}</loc><lastmod>{TODAY}</lastmod><changefreq>weekly</changefreq><priority>{p}</priority></url>\n" for u, p in urls) + "</urlset>\n")
-    (S.out / "robots.txt").write_text(f"User-agent: *\nAllow: /\nDisallow: /crew/\nDisallow: /api/\n\nSitemap: {S.base}/sitemap.xml\n")
+    (S.out / "robots.txt").write_text(f"User-agent: *\nAllow: /\nDisallow: /crew/\nDisallow: /api/\nDisallow: /admin/\n\nSitemap: {S.base}/sitemap.xml\n")
     (S.out / "site.webmanifest").write_text(json.dumps({"name": c["name"], "short_name": "Junk Junkies", "start_url": "/", "display": "standalone", "background_color": "#0B0D10", "theme_color": "#14F500", "icons": [{"src": "/assets/logo-icon.png", "sizes": "256x256", "type": "image/png"}]}))
     (S.out / "llms.txt").write_text(f"# {c['name']}\n\n> Junk removal, debris removal, hoarder cleanouts, appliance removal and moving in {', '.join(x['name'] for x in S.cities)}, Texas. Phone/text: {c['phone_display']}.\n\n## Services\n" + "".join(f"- [{s['name']}]({S.base}{S.svc_path(s)}): {s['blurb']}\n" for s in SERVICES) + "\n## Areas\n" + "".join(f"- [{x['name']}, TX]({S.base}{S.city_path(x)})\n" for x in S.cities))
-    (S.out / "vercel.json").write_text(json.dumps({"cleanUrls": True, "trailingSlash": True, "functions": {"api/*.js": {"maxDuration": 20}}, "headers": [{"source": "/assets/(.*)", "headers": [{"key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800"}]}, {"source": "/(.*)", "headers": [{"key": "X-Content-Type-Options", "value": "nosniff"}, {"key": "Referrer-Policy", "value": "strict-origin-when-cross-origin"}, {"key": "X-Frame-Options", "value": "SAMEORIGIN"}]}]}, indent=2))
+    (S.out / "vercel.json").write_text(json.dumps({"cleanUrls": True, "trailingSlash": True, "functions": {"api/*.js": {"maxDuration": 20}}, "crons": [{"path": "/api/gbp-sync", "schedule": "0 13 * * *"}], "headers": [{"source": "/assets/(.*)", "headers": [{"key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800"}]}, {"source": "/(.*)", "headers": [{"key": "X-Content-Type-Options", "value": "nosniff"}, {"key": "Referrer-Policy", "value": "strict-origin-when-cross-origin"}, {"key": "X-Frame-Options", "value": "SAMEORIGIN"}]}]}, indent=2))
     (S.out / "404.html").write_text(head(S, f"Page not found | {c['name']}", "Page not found.", "/404", "", '<meta name="robots" content="noindex">').replace('<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">', "") + header(S) + f'<main class="min-h-[70vh] grid place-items-center text-center px-5 pt-24"><div><h1 class="display text-5xl font-extrabold mb-4">Page not found.</h1><p class="text-bone/60 mb-6">But we can still haul your junk.</p><a href="/" class="rounded-full bg-ember text-ink font-bold px-8 py-4">Back to home</a></div></main>' + footer(S))
     print(f"{S.slug}: {len(urls)} pages -> dist/{S.slug}")
 

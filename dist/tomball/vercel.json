@@ -6,6 +6,12 @@
       "maxDuration": 20
     }
   },
+  "crons": [
+    {
+      "path": "/api/gbp-sync",
+      "schedule": "0 13 * * *"
+    }
+  ],
   "headers": [
     {
       "source": "/assets/(.*)",
