@@ -1,6 +1,6 @@
 {
  "spring": {
-  "name": "Junk Junkies Spring",
+  "name": "Junk Junkies Texas Junk Removal Spring",
   "cities": [
    [
     "Spring",
@@ -25,7 +25,7 @@
   ]
  },
  "tomball": {
-  "name": "Junk Junkies Tomball",
+  "name": "Junk Junkies Texas Junk Removal Tomball",
   "cities": [
    [
     "Tomball",
@@ -45,7 +45,7 @@
   ]
  },
  "cypress": {
-  "name": "Junk Junkies Cypress",
+  "name": "Junk Junkies Texas Junk Removal Cypress",
   "cities": [
    [
     "Cypress",
@@ -65,7 +65,7 @@
   ]
  },
  "college-station": {
-  "name": "Junk Junkies College Station",
+  "name": "Junk Junkies Texas Junk Removal College Station",
   "cities": [
    [
     "College Station",
