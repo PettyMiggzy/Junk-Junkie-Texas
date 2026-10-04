@@ -17,7 +17,7 @@
     "jersey-village",
     "hockley"
   ],
-  "logo": "cypress.png",
+  "logo": "texas-hq.png",
   "slug": "cypress",
-  "domain_is_placeholder": true
+  "domain_is_placeholder": false
 }

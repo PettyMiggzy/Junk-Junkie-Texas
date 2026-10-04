@@ -23,7 +23,9 @@ class Site:
         self.is_hq = cfg["slug"] == "spring"
         self.out = ROOT / "dist" / self.slug
         self.reviews = jload(ROOT / "data" / self.slug / "reviews.json", [])
-        self.jobs = jload(ROOT / "data" / self.slug / "jobs.json", [])
+        self.jobs = jload(ROOT / "data" / self.slug / "jobs.json", [])   # optional hand-curated seed jobs
+        rd = ROOT / "data" / self.slug / "reel"
+        self.reel = [f"/assets/reel/{x.name}" for x in sorted(rd.glob("*")) if x.suffix.lower() in (".jpg", ".jpeg", ".webp")] if rd.exists() else []
         self.biz_id = self.base + "/#business"
         self.og = self.base + "/assets/og-image.jpg"
     def svc_path(self, s): return f"/{s['slug']}-{self.c['hub']}-tx/"
@@ -82,7 +84,7 @@ def footer(S):
 {('<div class="mt-6 font-semibold mb-3">Our other locations</div>'+sis) if sis else ''}</div></div>
 <div class="max-w-7xl mx-auto px-5 mt-12 text-xs text-bone/40">© {YEAR} {c['name']}. All rights reserved.</div></footer>
 <div class="md:hidden fixed bottom-0 inset-x-0 z-50 bg-ink/95 backdrop-blur border-t border-line grid grid-cols-3 text-center text-sm font-bold"><a href="tel:{c['phone_tel']}" class="py-4 border-r border-line">Call</a><a href="sms:{c['phone_tel']}?body=Hi%2C%20I%20need%20a%20junk%20removal%20quote" class="py-4 border-r border-line">Text</a><a href="#quote" class="py-4 bg-ember text-ink">Quote</a></div>
-<script src="/assets/form.js" defer></script></body></html>'''
+<script src="/assets/form.js" defer></script><script src="/assets/app.js" defer></script></body></html>'''
 
 def quote_form(S, place):
     c = S.c; inp = 'bg-ink border border-line rounded-xl px-4 py-3 w-full focus:outline-none focus:border-ember'
@@ -111,31 +113,91 @@ def hero_small(S, h1, sub, crumbs_html):
 <div class="flex flex-col sm:flex-row gap-3"><a href="#quote" class="inline-flex justify-center rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition glow">Get a Free Quote</a><a href="tel:{c['phone_tel']}" class="inline-flex justify-center rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-8 py-4 transition">Call {c['phone_display']}</a></div></div></section>'''
 
 MAP_CSS = '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">'
-def map_section(S, heading="Where we work"):
+LEAFLET_JS = '<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" defer></script>'
+
+def map_section(S, heading="Where we work", sub=None):
     pts = [{"n": x["name"], "lat": x["lat"], "lon": x["lon"], "u": S.city_path(x)} for x in S.cities]
-    jobs = [{"t": j.get("title", "Completed job"), "lat": j["lat"], "lon": j["lon"], "img": j.get("image", ""), "area": j.get("area", "")} for j in S.jobs if "lat" in j]
-    return f'''<section class="py-16"><div class="max-w-6xl mx-auto px-5"><h2 class="display text-3xl font-extrabold mb-2">{heading}</h2><p class="text-bone/60 mb-6">{"Recent completed jobs and the areas we serve." if jobs else "The areas we serve. Tap a city to see local details."}</p>
-<div id="jjMap" class="w-full h-96 rounded-3xl border border-line overflow-hidden" data-cities='{json.dumps(pts)}' data-jobs='{json.dumps(jobs)}' role="img" aria-label="Map of our service area"></div></div>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" defer></script><script src="/assets/map.js" defer></script></section>'''
+    sub = sub or "Service areas and recent completed jobs. Tap a pin to see the job."
+    return f"""<section class="py-16"><div class="max-w-6xl mx-auto px-5"><h2 class="display text-3xl font-extrabold mb-2">{heading}</h2><p class="text-bone/60 mb-6">{sub}</p>
+<div id="jjMap" class="relative w-full h-[26rem] rounded-3xl border border-line overflow-hidden" data-cities='{json.dumps(pts)}' role="region" aria-label="Map of our service area and completed jobs"></div></div>{LEAFLET_JS}</section>"""
+
+def seed_json(S):
+    return '<script type="application/json" id="seedJobs">' + json.dumps([{**j, "id": "s" + str(i)} for i, j in enumerate(S.jobs)]).replace("</", "<\\/") + "</script>"
+
+def reviews_section(S):
+    static = ""
+    if S.reviews:
+        cards = "".join(f'<blockquote class="rounded-3xl bg-ink border border-line p-6"><div class="text-ember mb-2">{"★"*int(r.get("rating",5))}</div><p class="text-bone/80 mb-4">{r["text"]}</p><footer class="text-sm text-bone/50">— {r["author"]}{(", "+r["area"]) if r.get("area") else ""}</footer></blockquote>' for r in S.reviews[:6])
+        static = f'<div id="staticReviews" class="grid md:grid-cols-3 gap-4">{cards}</div>'
+    hid = "" if S.reviews else "hidden"
+    return f"""<section class="py-16 bg-slate2 border-y border-line {hid}" id="reviewsLive"><div class="max-w-6xl mx-auto px-5"><div class="flex flex-wrap items-end justify-between gap-3 mb-8"><h2 class="display text-3xl font-extrabold">What customers say</h2><div class="text-sm text-bone/70" data-head>Reviews from Google</div></div>{static}<div class="grid md:grid-cols-3 gap-4" data-grid></div><a data-link target="_blank" rel="noopener" class="inline-block mt-6 text-sm text-ember font-semibold" href="#">Read all reviews on Google</a></div></section>"""
+
+def home_jobs(S):
+    return """<section id="homeJobs" class="hidden py-16"><div class="max-w-6xl mx-auto px-5"><div class="flex items-end justify-between mb-8"><h2 class="display text-3xl font-extrabold">Recent jobs</h2><a href="/our-work/" class="text-sm text-ember font-semibold">See all our work</a></div><div class="grid md:grid-cols-3 gap-4" data-grid></div></div></section>"""
+
+def pricing_section(S):
+    tiers = [{"price": "$250", "pct": "25%", "label": "a few large items, like a couch and a chair"},
+             {"price": "$475", "pct": "50%", "label": "a room of furniture or a garage corner"},
+             {"price": "$675", "pct": "75%", "label": "most of a garage or a big cleanout"},
+             {"price": "$850", "pct": "100%", "label": "a full trailer: whole-room or yard cleanup"}]
+    c = S.c
+    return f"""<section id="pricing" class="py-20 bg-slate2 border-y border-line"><div class="max-w-7xl mx-auto px-5 grid lg:grid-cols-2 gap-14 items-center"><div>
+<p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">Easy trailer pricing</p><h2 class="display text-4xl md:text-5xl font-extrabold leading-tight mb-5">You pay for the space you use.</h2>
+<p class="text-bone/60 text-lg mb-7">Pricing is based on how much room your stuff takes up in our 16-ft trailer. Small pickups start around $99. Send a few pictures for an exact quote.</p>
+<label for="loadSlider" class="block text-sm font-semibold mb-3">How full will the trailer be?</label>
+<input id="loadSlider" type="range" min="1" max="4" value="2" step="1" class="w-full accent-ember" data-tiers='{json.dumps(tiers)}'>
+<div class="flex justify-between text-xs text-bone/50 mt-2"><span>¼ load</span><span>½ load</span><span>¾ load</span><span>Full</span></div>
+<div class="mt-7 flex flex-wrap items-baseline gap-3"><span class="text-bone/60 text-sm">Estimated</span><span id="loadPrice" class="display text-5xl font-extrabold text-ember">$475</span><span id="loadLabel" class="text-bone/60 text-sm"></span></div>
+<p class="text-xs text-bone/40 mt-4">Ballpark only. Heavy materials (concrete, dirt, shingles) are priced separately. 10% off for seniors, veterans and first responders.</p>
+<div class="mt-7 flex flex-wrap gap-3"><a href="#quote" class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition">Get an exact quote</a><a href="sms:{c['phone_tel']}" class="rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-8 py-4 transition">Text pictures</a></div></div>
+<div class="flex justify-center"><div class="relative w-full max-w-md aspect-[4/3] rounded-3xl border border-line bg-ink overflow-hidden"><div class="absolute bottom-0 inset-x-0 bg-ember/20 border-t border-ember truck-fill" id="truckFill" style="height:50%"></div>
+<div class="absolute inset-0 flex flex-col items-center justify-center text-center p-8"><div class="display text-7xl font-extrabold" id="truckPct">50%</div><div class="text-bone/60 text-sm mt-2">of our 16-ft trailer</div></div><div class="absolute top-4 left-4 text-xs tracking-widest uppercase text-bone/40">Load estimator</div></div></div></div></section>"""
+
+def reel_html(S):
+    if not S.reel: return ""
+    imgs = "".join(f'<img src="{u}" alt="" loading="{"eager" if i == 0 else "lazy"}" class="reel-img{" on" if i == 0 else ""}">' for i, u in enumerate(S.reel))
+    return f'<div id="heroReel" class="absolute inset-0" aria-hidden="true">{imgs}</div>'
 
 def find_us(S):
     if not S.is_hq: return ""
     c = S.c; q = f"{c['street']}, {c['street_city']}, TX {c['zip']}".replace(" ", "+")
-    return f'''<section id="visit" class="py-16 bg-slate2 border-y border-line"><div class="max-w-6xl mx-auto px-5 grid lg:grid-cols-2 gap-10 items-center"><div><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">Find us</p><h2 class="display text-3xl md:text-4xl font-extrabold leading-tight mb-4">Based in Spring, TX.</h2>
+    return f"""<section id="visit" class="py-16 bg-slate2 border-y border-line"><div class="max-w-6xl mx-auto px-5 grid lg:grid-cols-2 gap-10 items-center"><div><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">Find us</p><h2 class="display text-3xl md:text-4xl font-extrabold leading-tight mb-4">Based in Spring, TX.</h2>
 <address class="not-italic text-lg text-bone/80 mb-4">{c['street']}<br>{c['street_city']}, TX {c['zip']}</address><p class="text-bone/60 mb-6">Call or text first to schedule a pickup. We come to you across the Spring, Klein, The Woodlands and Humble area.</p>
 <div class="flex flex-wrap gap-3"><a href="tel:{c['phone_tel']}" class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-6 py-3 transition">Call {c['phone_display']}</a><a rel="noopener" target="_blank" href="https://www.google.com/maps/dir/?api=1&destination={q}" class="rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-6 py-3 transition">Get directions</a></div></div>
-<iframe src="https://www.google.com/maps?q={q}&output=embed" title="Map showing {c['name']} location in Spring, TX" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="w-full h-80 lg:h-96 rounded-3xl border border-line" style="filter:invert(.92) hue-rotate(180deg) saturate(.8)"></iframe></div></section>'''
+<iframe src="https://www.google.com/maps?q={q}&output=embed" title="Map showing {c['name']} location in Spring, TX" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="w-full h-80 lg:h-96 rounded-3xl border border-line" style="filter:invert(.92) hue-rotate(180deg) saturate(.8)"></iframe></div></section>"""
 
-def reviews_section(S):
-    if not S.reviews: return ""
-    cards = "".join(f'<blockquote class="rounded-3xl bg-slate2 border border-line p-6"><div class="text-ember mb-2">{"★"*int(r.get("rating",5))}</div><p class="text-bone/80 mb-4">{r["text"]}</p><footer class="text-sm text-bone/50">— {r["author"]}{(", "+r["area"]) if r.get("area") else ""}</footer></blockquote>' for r in S.reviews[:6])
-    return f'<section class="py-16 bg-slate2 border-y border-line"><div class="max-w-6xl mx-auto px-5"><h2 class="display text-3xl font-extrabold mb-8">What customers say</h2><div class="grid md:grid-cols-3 gap-4">{cards}</div></div></section>'
+def work_page(S):
+    c = S.c; hub = S.hub["name"]; path = "/our-work/"
+    title = f"Our Work | Completed Junk Removal Jobs in {hub}, TX | {c['name']}"
+    desc = f"See recent completed junk removal jobs around {hub}, TX: before and after photos, locations and what we hauled."
+    schema = ld(business_schema(S), crumbs(S, [("Home", "/"), ("Our Work", path)]))
+    pts = [{"n": x["name"], "lat": x["lat"], "lon": x["lon"], "u": S.city_path(x)} for x in S.cities]
+    body = f"""<main><section class="pt-28 pb-12 md:pt-36 md:pb-16 border-b border-line" style="background:radial-gradient(circle at 70% 30%,rgba(20,245,0,.14),transparent 60%),#06120F"><div class="max-w-6xl mx-auto px-5">{crumb_html([("Home","/"),("Our Work",path)])}<h1 class="display text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-[0.98] mb-4">See Our Work</h1><p class="text-lg text-bone/70 max-w-2xl">Real jobs from our crew around {", ".join(x["name"] for x in S.cities)}. Every pin on the map is a completed job.</p><p class="mt-4 text-sm text-ember font-semibold" id="jobCount"></p></div></section>
+<section class="py-10"><div class="max-w-6xl mx-auto px-5"><div id="jjMap" class="relative w-full h-[28rem] md:h-[32rem] rounded-3xl border border-line overflow-hidden" data-cities='{json.dumps(pts)}' role="region" aria-label="Map of completed jobs"></div></div>{LEAFLET_JS}</section>
+<section class="pb-20"><div class="max-w-6xl mx-auto px-5 grid lg:grid-cols-3 gap-8 items-start">
+<div class="lg:col-span-2"><div id="jobGrid" class="grid sm:grid-cols-2 gap-5"></div><div class="text-center mt-8"><button id="loadMore" type="button" class="hidden rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition">Show all jobs</button></div></div>
+<aside class="lg:sticky lg:top-24 rounded-3xl border border-line bg-slate2 p-5" aria-label="Recent jobs"><h2 class="display text-xl font-extrabold mb-3">Recent jobs</h2><div id="jobSide" class="space-y-1"></div><a href="#quote" class="mt-4 block text-center rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-6 py-3 transition">Get a free quote</a></aside></div></section>
+{reviews_section(S)}{quote_form(S, hub + ", TX")}{seed_json(S)}</main>"""
+    S.write(path, head(S, title, desc, path, schema, MAP_CSS) + header(S) + body + footer(S))
 
-def gallery_section(S):
-    ph = [j for j in S.jobs if j.get("image")]
-    if not ph: return ""
-    g = "".join(f'<figure class="rounded-2xl overflow-hidden border border-line"><img src="{j["image"]}" alt="{j.get("title","Completed junk removal job")}{(" in "+j["area"]) if j.get("area") else ""}" loading="lazy" class="w-full h-56 object-cover"></figure>' for j in ph[:9])
-    return f'<section class="py-16"><div class="max-w-6xl mx-auto px-5"><h2 class="display text-3xl font-extrabold mb-8">Recent jobs</h2><div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">{g}</div></div></section>'
+def crew_page(S):
+    c = S.c; path = "/crew/"
+    pts = [{"n": x["name"], "lat": x["lat"], "lon": x["lon"]} for x in S.cities]
+    inp = "bg-ink border border-line rounded-xl px-4 py-3 w-full focus:outline-none focus:border-ember"
+    city_opts = "".join(f"<option>{x['name']}</option>" for x in S.cities)
+    svc_opts = "".join(f"<option>{o}</option>" for o in HOME_SERVICES)
+    body = f"""<main class="pt-24 pb-24"><div class="max-w-xl mx-auto px-5"><h1 class="display text-3xl font-extrabold mb-2">Post a finished job</h1><p class="text-bone/60 mb-6">Crew only. Take photos at the job site and they go on the Our Work page and map for {c['name']}.</p>
+<form id="crewForm" class="grid gap-4" data-cities='{json.dumps(pts)}'>
+<input name="pin" type="password" inputmode="numeric" placeholder="Crew PIN" autocomplete="off" required class="{inp}">
+<select name="service" required class="{inp}"><option value="">What did you haul?</option>{svc_opts}</select>
+<select name="city" required class="{inp}"><option value="">City</option>{city_opts}</select>
+<input name="area" placeholder="Neighborhood (optional, no street addresses)" class="{inp}">
+<button type="button" id="gpsBtn" class="rounded-xl border border-line px-4 py-3 text-left">📍 Use my location</button>
+<label class="block"><span class="text-sm text-bone/70">Before photo (optional)</span><input name="before" type="file" accept="image/*" capture="environment" class="mt-1 block w-full text-sm"></label>
+<label class="block"><span class="text-sm text-bone/70">After photo (required)</span><input name="after" type="file" accept="image/*" capture="environment" required class="mt-1 block w-full text-sm"></label>
+<textarea name="description" rows="3" maxlength="600" placeholder="1-3 sentences about the job" class="{inp}"></textarea>
+<button id="crewBtn" class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition">Post to map</button><p id="crewMsg" class="text-sm text-bone/70" role="status"></p></form><p class="text-xs text-bone/40 mt-6">Do not include customer faces, house numbers, license plates or street addresses. Pins are shown only to about 1 km.</p></div></main>"""
+    S.write(path, head(S, f"Crew upload | {c['name']}", "Crew upload", path, "", '<meta name="robots" content="noindex, nofollow">').replace('<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">', "") + header(S) + body + footer(S).replace("/assets/form.js", "/assets/crew.js"))
 
 # ------------------------------------------------------------ pages
 def home(S):
@@ -151,7 +213,7 @@ def home(S):
     schema = ld(business_schema(S), {"@context": "https://schema.org", "@type": "WebSite", "name": c["name"], "url": S.base + "/", "publisher": {"@id": S.biz_id}}, faq_schema(faq))
     svc = "".join(f'<a href="{S.svc_path(s)}" class="rounded-2xl bg-slate2 border border-line p-6 hover:border-ember/60 transition"><div class="display text-ember font-extrabold mb-2">{s["icon"]}</div><h3 class="display font-bold text-lg mb-1">{s["name"]}</h3><p class="text-sm text-bone/60">{s["blurb"]}</p></a>' for s in SERVICES)
     areas = "".join(f'<a href="{S.city_path(x)}" class="rounded-2xl border border-line bg-ink p-5 hover:border-ember/60 transition"><div class="font-semibold">{x["name"]}</div><div class="text-xs text-bone/50 mt-1">{x["county"]} County</div></a>' for x in S.cities)
-    body = f'''<main><section class="relative min-h-[100svh] flex items-end md:items-center pt-24 pb-32 md:pb-24 overflow-hidden"><img src="/assets/hero.webp" width="1280" height="720" alt="{c['name']} crew carrying a couch to a black junk removal truck" class="absolute inset-0 w-full h-full object-cover opacity-55" fetchpriority="high"><div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/10"></div>
+    body = f'''<main><section class="relative min-h-[100svh] flex items-end md:items-center pt-24 pb-32 md:pb-24 overflow-hidden"><img src="/assets/hero.webp" width="1280" height="720" alt="" class="absolute inset-0 w-full h-full object-cover opacity-55" fetchpriority="high">{reel_html(S)}<div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/10"></div>
 <div class="relative max-w-7xl mx-auto px-5 w-full grid lg:grid-cols-12 gap-10 items-center"><div class="lg:col-span-7">
 <p class="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-ember mb-6"><span class="w-2 h-2 rounded-full bg-ember animate-pulse"></span> Serving {", ".join(names)}</p>
 <h1 class="display text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-[0.95] mb-6">Junk Removal in <span class="text-ember">{hub}, TX</span></h1>
@@ -160,10 +222,11 @@ def home(S):
 <p class="mt-8 text-sm text-ember font-semibold">★ Veteran and first responder discount available</p></div>
 <div class="lg:col-span-5 hidden lg:flex justify-center"><div class="logo-shine"><img src="/assets/logo.png" width="360" height="360" alt="{c['name']} logo" class="w-[22rem]"></div></div></div></section>
 <section id="services" class="py-24"><div class="max-w-7xl mx-auto px-5"><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">What we do</p><h2 class="display text-4xl md:text-5xl font-extrabold leading-tight mb-6 max-w-3xl">If it needs to go, we haul it.</h2><p class="text-bone/60 text-lg max-w-2xl mb-12">{S.hub["housing"]}</p><div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">{svc}</div></div></section>
+{pricing_section(S)}
+{home_jobs(S)}
+{reviews_section(S)}
 {map_section(S)}
 {find_us(S)}
-{reviews_section(S)}
-{gallery_section(S)}
 <section id="areas" class="py-16 bg-slate2 border-y border-line"><div class="max-w-6xl mx-auto px-5"><h2 class="display text-3xl font-extrabold mb-3">Service areas</h2><p class="text-bone/60 mb-8">{S.hub["name"]} is our home base. We also serve {others}.</p><div class="grid grid-cols-2 md:grid-cols-4 gap-3">{areas}</div></div></section>
 {quote_form(S, hub + ", TX")}
 <section id="faq" class="py-20"><div class="max-w-4xl mx-auto px-5"><h2 class="display text-3xl md:text-4xl font-extrabold mb-8">Questions we get every day.</h2>{faq_html(faq)}</div></section></main>'''
@@ -218,7 +281,11 @@ def build_site(S):
     (S.out / "assets").mkdir(parents=True)
     # assets
     shutil.copy(ROOT / "shared" / "hero.webp", S.out / "assets/hero.webp")
-    for f in ["form.js", "map.js"]: shutil.copy(ROOT / "shared" / f, S.out / "assets" / f)
+    for f in ["form.js", "app.js", "crew.js"]: shutil.copy(ROOT / "shared" / f, S.out / "assets" / f)
+    shutil.copytree(ROOT / "shared" / "api", S.out / "api"); shutil.copy(S.out / "api" / "package.json", S.out / "package.json"); (S.out / "api" / "package.json").unlink()
+    (S.out / "api" / "_site.js").write_text(f'export default {json.dumps(S.slug)};\n')
+    rd = ROOT / "data" / S.slug / "reel"
+    if rd.exists(): shutil.copytree(rd, S.out / "assets/reel")
     from PIL import Image
     logo = Image.open(ROOT / "assets/logos" / c["logo"]).convert("RGB")
     import numpy as np
@@ -242,15 +309,14 @@ def build_site(S):
     hub_page(S, "/areas/", f"Junk Removal Service Areas | {hub} & Nearby, TX | {c['name']}", f"We serve {', '.join(x['name'] for x in S.cities)}, Texas. Call {c['phone_display']}.", "Junk Removal Service Areas", f"Serving {', '.join(x['name'] for x in S.cities)}, Texas.", cc, "Service Areas", map_section(S), MAP_CSS)
     sc = "".join(f'<a href="{S.svc_path(s)}" class="rounded-2xl bg-slate2 border border-line p-6 hover:border-ember/60 transition"><div class="display text-ember font-extrabold mb-2">{s["icon"]}</div><h2 class="display font-bold text-xl mb-1">{s["name"]}</h2><p class="text-sm text-bone/60">{s["blurb"]}</p></a>' for s in SERVICES)
     hub_page(S, "/services/", f"Junk Removal Services {hub}, TX | {c['name']}", f"Junk removal, debris removal, hoarder cleanouts, appliance removal, moving and more in {hub}, TX. Call {c['phone_display']}.", "Our Services", "From a single couch to a whole-property cleanout.", sc, "Services")
-    work = (gallery_section(S) + reviews_section(S)) or ""
-    hub_page(S, "/our-work/", f"Our Work | Completed Junk Removal Jobs in {hub}, TX | {c['name']}", f"See recent completed junk removal jobs around {hub}, TX.", "Our Work", "Recent completed jobs around our service area.", "", "Our Work", map_section(S, "Completed jobs map") + work, MAP_CSS)
+    work_page(S); crew_page(S)
     # site files
     urls = [("/", "1.0"), ("/areas/", "0.8"), ("/services/", "0.8"), ("/our-work/", "0.6")] + [(S.svc_path(s), "0.8") for s in SERVICES] + [(S.city_path(x), "0.9" if x is S.hub else "0.7") for x in S.cities]
     (S.out / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"<url><loc>{S.base}{u}</loc><lastmod>{TODAY}</lastmod><changefreq>weekly</changefreq><priority>{p}</priority></url>\n" for u, p in urls) + "</urlset>\n")
-    (S.out / "robots.txt").write_text(f"User-agent: *\nAllow: /\n\nSitemap: {S.base}/sitemap.xml\n")
+    (S.out / "robots.txt").write_text(f"User-agent: *\nAllow: /\nDisallow: /crew/\nDisallow: /api/\n\nSitemap: {S.base}/sitemap.xml\n")
     (S.out / "site.webmanifest").write_text(json.dumps({"name": c["name"], "short_name": "Junk Junkies", "start_url": "/", "display": "standalone", "background_color": "#0B0D10", "theme_color": "#14F500", "icons": [{"src": "/assets/logo-icon.png", "sizes": "256x256", "type": "image/png"}]}))
     (S.out / "llms.txt").write_text(f"# {c['name']}\n\n> Junk removal, debris removal, hoarder cleanouts, appliance removal and moving in {', '.join(x['name'] for x in S.cities)}, Texas. Phone/text: {c['phone_display']}.\n\n## Services\n" + "".join(f"- [{s['name']}]({S.base}{S.svc_path(s)}): {s['blurb']}\n" for s in SERVICES) + "\n## Areas\n" + "".join(f"- [{x['name']}, TX]({S.base}{S.city_path(x)})\n" for x in S.cities))
-    (S.out / "vercel.json").write_text(json.dumps({"cleanUrls": True, "trailingSlash": True, "headers": [{"source": "/assets/(.*)", "headers": [{"key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800"}]}, {"source": "/(.*)", "headers": [{"key": "X-Content-Type-Options", "value": "nosniff"}, {"key": "Referrer-Policy", "value": "strict-origin-when-cross-origin"}, {"key": "X-Frame-Options", "value": "SAMEORIGIN"}]}]}, indent=2))
+    (S.out / "vercel.json").write_text(json.dumps({"cleanUrls": True, "trailingSlash": True, "functions": {"api/*.js": {"maxDuration": 20}}, "headers": [{"source": "/assets/(.*)", "headers": [{"key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800"}]}, {"source": "/(.*)", "headers": [{"key": "X-Content-Type-Options", "value": "nosniff"}, {"key": "Referrer-Policy", "value": "strict-origin-when-cross-origin"}, {"key": "X-Frame-Options", "value": "SAMEORIGIN"}]}]}, indent=2))
     (S.out / "404.html").write_text(head(S, f"Page not found | {c['name']}", "Page not found.", "/404", "", '<meta name="robots" content="noindex">').replace('<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">', "") + header(S) + f'<main class="min-h-[70vh] grid place-items-center text-center px-5 pt-24"><div><h1 class="display text-5xl font-extrabold mb-4">Page not found.</h1><p class="text-bone/60 mb-6">But we can still haul your junk.</p><a href="/" class="rounded-full bg-ember text-ink font-bold px-8 py-4">Back to home</a></div></main>' + footer(S))
     print(f"{S.slug}: {len(urls)} pages -> dist/{S.slug}")
 

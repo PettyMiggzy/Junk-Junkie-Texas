@@ -1,6 +1,11 @@
 {
   "cleanUrls": true,
   "trailingSlash": true,
+  "functions": {
+    "api/*.js": {
+      "maxDuration": 20
+    }
+  },
   "headers": [
     {
       "source": "/assets/(.*)",

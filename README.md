@@ -27,3 +27,10 @@ Commit `dist/`. No build step is needed on Vercel.
 
 ## Deploy (4 Vercel projects, same repo)
 For each site: Add New Project > this repo > Framework **Other** > Root Directory `dist/<site>` > no build command. Then add the site's domain.
+
+## Live features (need one-time setup per Vercel project)
+- **Completed jobs map + gallery (`/our-work/`)** and **crew upload (`/crew/`)**: crew open `/crew/` on a phone, enter the PIN, snap before/after photos, and the job appears on the map. Needs Vercel env vars: `DATABASE_URL` (Neon Postgres), `BLOB_READ_WRITE_TOKEN` (Vercel Blob store connected to the project), `CREW_PIN` (a number you pick). The table creates itself.
+- **Google reviews**: env vars `GOOGLE_PLACES_KEY` (Google Cloud, Places API (New) enabled) and `GOOGLE_PLACE_ID` (the location's Place ID). Shows up to 5 recent 4-5 star reviews (Google's limit) plus the rating and count; cached 24h.
+- Until those are set the pages work normally and the job/review sections stay empty or hidden.
+- Job pins are rounded to ~1 km so a customer's exact address is never published.
+- Hero photo reel: add JPG/WEBP files to `data/<site>/reel/` and rebuild.
