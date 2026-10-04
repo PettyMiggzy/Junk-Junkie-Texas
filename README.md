@@ -34,3 +34,9 @@ For each site: Add New Project > this repo > Framework **Other** > Root Director
 - Until those are set the pages work normally and the job/review sections stay empty or hidden.
 - Job pins are rounded to ~1 km so a customer's exact address is never published.
 - Hero photo reel: add JPG/WEBP files to `data/<site>/reel/` and rebuild.
+
+## Hosting status
+- Vercel projects: `junkjunkies-spring`, `junkjunkies-tomball`, `junkjunkies-cypress`, `junkjunkies-college-station` (root dir `dist/<site>`, production branch `main`).
+- Shared Neon database `junkjunkies` (limited role `junkjunkies_app`); every job row has a `site` column. One Blob store per project.
+- `DATABASE_URL`, `CREW_PIN`, `BLOB_READ_WRITE_TOKEN` are set in each Vercel project. `GOOGLE_PLACES_KEY` / `GOOGLE_PLACE_ID` still to add for reviews.
+- `junkjunkiestexas.com` is intentionally NOT attached yet (live WordPress site).
