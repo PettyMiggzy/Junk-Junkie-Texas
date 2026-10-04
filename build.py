@@ -120,13 +120,14 @@ def top_form(S, place, anchor=True):
     opts = "".join(f"<option>{o}</option>" for o in HOME_SERVICES)
     return f"""<div {'id="quote" ' if anchor else ''}class="rounded-3xl bg-slate2/90 backdrop-blur border border-line p-4 sm:p-6 shadow-2xl scroll-mt-24">
 <div class="display text-lg sm:text-2xl font-extrabold leading-tight">Get your free quote in minutes</div>
-<p class="text-sm text-bone/60 mt-1 mb-3 sm:mb-4"><span class="hidden sm:inline">Tell us what you need. We'll text you a price. </span><span class="text-ember font-semibold">10% off for veterans, seniors and first responders.</span></p>
+<p class="hidden sm:block text-sm text-bone/60 mt-1 mb-2">Tell us what you need. We'll text you a price.</p>
+<div class="disc mt-2 mb-3 sm:mb-4" role="note" aria-label="10 percent discount for veterans, seniors and first responders"><div class="disc-badge" aria-hidden="true"><span>10%</span></div><div class="disc-txt"><b>10% OFF</b><span>Veterans, seniors &amp; first responders</span></div><svg class="disc-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.3 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/></svg></div>
 <form data-quote class="grid gap-3" aria-label="Quick quote request" data-key="{c['web3forms_key']}" data-email="{c['email']}" data-site="{c['name']}">
 <input type="hidden" name="access_key" value="{c['web3forms_key']}"><input type="hidden" name="subject" value="Quote request: {c['name']} ({place})"><input type="hidden" name="from_name" value="{c['name']} website"><input type="checkbox" name="botcheck" style="display:none">
 <input required name="name" autocomplete="name" aria-label="Your name" placeholder="Your name" class="{inp}">
 <input required name="phone" type="tel" inputmode="tel" autocomplete="tel" aria-label="Phone number" placeholder="Phone number" class="{inp}">
 <div class="grid grid-cols-5 gap-3"><input required name="zip" inputmode="numeric" autocomplete="postal-code" aria-label="Zip code" placeholder="Zip" class="{inp} col-span-2"><select name="service" aria-label="What do you need" class="{inp} col-span-3"><option value="">Service needed</option>{opts}</select></div>
-<textarea name="message" rows="1" maxlength="600" aria-label="Notes" placeholder="Notes: what needs to go, stairs, timing" class="{inp} resize-none"></textarea>
+<textarea name="message" rows="1" maxlength="600" aria-label="Notes" placeholder="Notes (optional)" class="{inp} resize-none"></textarea>
 <button type="submit" data-btn class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-3 sm:py-4 text-base transition glow">Get My Free Quote</button>
 <p data-msg class="text-sm text-center text-bone/60" role="status"></p></form>
 <div class="text-center text-sm text-bone/60">or call / text <a class="text-ember font-semibold" href="tel:{c['phone_tel']}">{c['phone_display']}</a> with photos</div></div>"""
