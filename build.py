@@ -118,6 +118,14 @@ def map_section(S, heading="Where we work"):
 <div id="jjMap" class="w-full h-96 rounded-3xl border border-line overflow-hidden" data-cities='{json.dumps(pts)}' data-jobs='{json.dumps(jobs)}' role="img" aria-label="Map of our service area"></div></div>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" defer></script><script src="/assets/map.js" defer></script></section>'''
 
+def find_us(S):
+    if not S.is_hq: return ""
+    c = S.c; q = f"{c['street']}, {c['street_city']}, TX {c['zip']}".replace(" ", "+")
+    return f'''<section id="visit" class="py-16 bg-slate2 border-y border-line"><div class="max-w-6xl mx-auto px-5 grid lg:grid-cols-2 gap-10 items-center"><div><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">Find us</p><h2 class="display text-3xl md:text-4xl font-extrabold leading-tight mb-4">Based in Spring, TX.</h2>
+<address class="not-italic text-lg text-bone/80 mb-4">{c['street']}<br>{c['street_city']}, TX {c['zip']}</address><p class="text-bone/60 mb-6">Call or text first to schedule a pickup. We come to you across the Spring, Klein, The Woodlands and Humble area.</p>
+<div class="flex flex-wrap gap-3"><a href="tel:{c['phone_tel']}" class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-6 py-3 transition">Call {c['phone_display']}</a><a rel="noopener" target="_blank" href="https://www.google.com/maps/dir/?api=1&destination={q}" class="rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-6 py-3 transition">Get directions</a></div></div>
+<iframe src="https://www.google.com/maps?q={q}&output=embed" title="Map showing {c['name']} location in Spring, TX" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="w-full h-80 lg:h-96 rounded-3xl border border-line" style="filter:invert(.92) hue-rotate(180deg) saturate(.8)"></iframe></div></section>'''
+
 def reviews_section(S):
     if not S.reviews: return ""
     cards = "".join(f'<blockquote class="rounded-3xl bg-slate2 border border-line p-6"><div class="text-ember mb-2">{"★"*int(r.get("rating",5))}</div><p class="text-bone/80 mb-4">{r["text"]}</p><footer class="text-sm text-bone/50">— {r["author"]}{(", "+r["area"]) if r.get("area") else ""}</footer></blockquote>' for r in S.reviews[:6])
@@ -153,6 +161,7 @@ def home(S):
 <div class="lg:col-span-5 hidden lg:flex justify-center"><div class="logo-shine"><img src="/assets/logo.png" width="360" height="360" alt="{c['name']} logo" class="w-[22rem]"></div></div></div></section>
 <section id="services" class="py-24"><div class="max-w-7xl mx-auto px-5"><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">What we do</p><h2 class="display text-4xl md:text-5xl font-extrabold leading-tight mb-6 max-w-3xl">If it needs to go, we haul it.</h2><p class="text-bone/60 text-lg max-w-2xl mb-12">{S.hub["housing"]}</p><div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">{svc}</div></div></section>
 {map_section(S)}
+{find_us(S)}
 {reviews_section(S)}
 {gallery_section(S)}
 <section id="areas" class="py-16 bg-slate2 border-y border-line"><div class="max-w-6xl mx-auto px-5"><h2 class="display text-3xl font-extrabold mb-3">Service areas</h2><p class="text-bone/60 mb-8">{S.hub["name"]} is our home base. We also serve {others}.</p><div class="grid grid-cols-2 md:grid-cols-4 gap-3">{areas}</div></div></section>
