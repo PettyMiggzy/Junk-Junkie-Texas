@@ -116,18 +116,18 @@ def quote_form(S, place, anchor="quote-more"):
 <button type="submit" data-btn class="sm:col-span-2 rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition">Get My Fast Quote</button><p data-msg class="sm:col-span-2 text-sm text-center text-bone/60" role="status"></p></form></div></section>'''
 
 def top_form(S, place, anchor=True):
-    c = S.c; inp = 'bg-ink border border-line rounded-xl px-4 py-3 w-full text-base focus:outline-none focus:border-ember'
+    c = S.c; inp = 'bg-ink border border-line rounded-xl px-4 py-2 sm:py-3 w-full text-base focus:outline-none focus:border-ember'
     opts = "".join(f"<option>{o}</option>" for o in HOME_SERVICES)
-    return f"""<div {'id="quote" ' if anchor else ''}class="rounded-3xl bg-slate2/90 backdrop-blur border border-line p-5 sm:p-6 shadow-2xl scroll-mt-24">
-<div class="display text-xl sm:text-2xl font-extrabold leading-tight">Get your free quote in minutes</div>
+    return f"""<div {'id="quote" ' if anchor else ''}class="rounded-3xl bg-slate2/90 backdrop-blur border border-line p-4 sm:p-6 shadow-2xl scroll-mt-24">
+<div class="display text-lg sm:text-2xl font-extrabold leading-tight">Get your free quote in minutes</div>
 <p class="text-sm text-bone/60 mt-1 mb-3 sm:mb-4"><span class="hidden sm:inline">Tell us what you need. We'll text you a price. </span><span class="text-ember font-semibold">10% off for veterans, seniors and first responders.</span></p>
 <form data-quote class="grid gap-3" aria-label="Quick quote request" data-key="{c['web3forms_key']}" data-email="{c['email']}" data-site="{c['name']}">
 <input type="hidden" name="access_key" value="{c['web3forms_key']}"><input type="hidden" name="subject" value="Quote request: {c['name']} ({place})"><input type="hidden" name="from_name" value="{c['name']} website"><input type="checkbox" name="botcheck" style="display:none">
 <input required name="name" autocomplete="name" aria-label="Your name" placeholder="Your name" class="{inp}">
 <input required name="phone" type="tel" inputmode="tel" autocomplete="tel" aria-label="Phone number" placeholder="Phone number" class="{inp}">
 <div class="grid grid-cols-5 gap-3"><input required name="zip" inputmode="numeric" autocomplete="postal-code" aria-label="Zip code" placeholder="Zip" class="{inp} col-span-2"><select name="service" aria-label="What do you need" class="{inp} col-span-3"><option value="">Service needed</option>{opts}</select></div>
-<textarea name="message" rows="2" maxlength="600" aria-label="Notes" placeholder="Notes (what needs to go, stairs, timing...)" class="{inp} resize-none"></textarea>
-<button type="submit" data-btn class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 text-base transition glow">Get My Free Quote</button>
+<textarea name="message" rows="1" maxlength="600" aria-label="Notes" placeholder="Notes: what needs to go, stairs, timing" class="{inp} resize-none"></textarea>
+<button type="submit" data-btn class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-3 sm:py-4 text-base transition glow">Get My Free Quote</button>
 <p data-msg class="text-sm text-center text-bone/60" role="status"></p></form>
 <div class="text-center text-sm text-bone/60">or call / text <a class="text-ember font-semibold" href="tel:{c['phone_tel']}">{c['phone_display']}</a> with photos</div></div>"""
 
@@ -253,7 +253,8 @@ def home(S):
 <div class="relative max-w-7xl mx-auto px-5 w-full grid lg:grid-cols-12 gap-8 lg:gap-10 items-center"><div class="lg:col-span-7">
 <p class="inline-flex items-center gap-2 text-[11px] sm:text-xs font-semibold tracking-widest uppercase text-ember mb-3 sm:mb-6"><span class="w-2 h-2 rounded-full bg-ember animate-pulse"></span> Serving {", ".join(names)}</p>
 <div class="hidden sm:block mb-5"><div class="logo-shine"><img src="/assets/logo.png" width="120" height="120" alt="{c['name']} logo" class="w-28 h-28"></div></div>
-<h1 class="display text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-[0.98] mb-4 sm:mb-5">Junk Removal in <span class="text-ember">{hub}, TX</span></h1>
+<h1 class="display text-[34px] sm:text-6xl lg:text-7xl font-extrabold leading-[0.98] mb-3 sm:mb-5">Junk Removal in <span class="text-ember">{hub}, TX</span></h1>
+<div class="rig relative max-w-xl mb-3 sm:mb-6 rounded-xl overflow-hidden border border-line" style="aspect-ratio:1100/260"><img src="/assets/rig1.webp" width="1100" height="260" alt="{c['name']} truck and trailer" class="absolute inset-0 w-full h-full object-cover"><img src="/assets/rig2.webp" width="1100" height="260" alt="" loading="lazy" class="rig2 absolute inset-0 w-full h-full object-cover"></div>
 <p class="hidden sm:block text-base md:text-xl text-bone/75 max-w-xl mb-6">Reliable junk removal, debris cleanup, cleanouts, appliance and furniture removal. {S.hub["note"]}</p>
 <div class="hidden sm:flex gap-3"><a href="tel:{c['phone_tel']}" class="inline-flex justify-center rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-8 py-4 transition">Call {c['phone_display']}</a></div></div>
 <div class="lg:col-span-5">{top_form(S, hub + ", TX")}</div></section>
@@ -317,6 +318,7 @@ def build_site(S):
     (S.out / "assets").mkdir(parents=True)
     # assets
     shutil.copy(ROOT / "shared" / "hero.webp", S.out / "assets/hero.webp")
+    for rg in ("rig1.webp", "rig2.webp"): shutil.copy(ROOT / "shared" / "rig" / rg, S.out / "assets" / rg)
     for f in ["form.js", "app.js", "crew.js", "admin.js"]: shutil.copy(ROOT / "shared" / f, S.out / "assets" / f)
     shutil.copytree(ROOT / "shared" / "api", S.out / "api"); shutil.copy(S.out / "api" / "package.json", S.out / "package.json"); (S.out / "api" / "package.json").unlink()
     (S.out / "api" / "_site.js").write_text(f'export default {json.dumps(S.slug)};\n')

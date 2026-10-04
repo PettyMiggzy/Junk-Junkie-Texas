@@ -25,3 +25,7 @@ input,select,textarea{color-scheme:dark}
 .reel-img.on{opacity:1}
 .jj-fs{position:absolute;right:10px;bottom:30px;z-index:1000;background:#14181D;color:#F4F1EA;border:1px solid #232A32;border-radius:8px;width:34px;height:34px;font-size:18px;cursor:pointer}
 .jj-dark .leaflet-control-layers{background:#14181D;color:#F4F1EA;border-color:#232A32}
+
+@keyframes rigfade{0%,42%{opacity:0}50%,92%{opacity:1}100%{opacity:0}}
+.rig2{opacity:0;animation:rigfade 12s ease-in-out infinite}
+@media (prefers-reduced-motion:reduce){.rig2{animation:none}}
