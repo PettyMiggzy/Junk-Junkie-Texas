@@ -99,10 +99,10 @@ def footer(S):
 <div class="md:hidden fixed bottom-0 inset-x-0 z-50 bg-ink/95 backdrop-blur border-t border-line grid grid-cols-3 text-center text-sm font-bold"><a href="tel:{c['phone_tel']}" class="py-4 border-r border-line">Call</a><a href="sms:{c['phone_tel']}?body=Hi%2C%20I%20need%20a%20junk%20removal%20quote" class="py-4 border-r border-line">Text</a><a href="#quote" class="py-4 bg-ember text-ink">Quote</a></div>
 <script src="/assets/form.js" defer></script><script src="/assets/app.js" defer></script></body></html>'''
 
-def quote_form(S, place):
+def quote_form(S, place, anchor="quote-more"):
     c = S.c; inp = 'bg-ink border border-line rounded-xl px-4 py-3 w-full focus:outline-none focus:border-ember'
     opts = "".join(f"<option>{o}</option>" for o in HOME_SERVICES)
-    return f'''<section id="quote-more" class="py-20 bg-slate2 border-y border-line"><div class="max-w-5xl mx-auto px-5 grid lg:grid-cols-2 gap-10">
+    return f'''<section id="{anchor}" class="py-20 bg-slate2 border-y border-line"><div class="max-w-5xl mx-auto px-5 grid lg:grid-cols-2 gap-10">
 <div><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">Free quote</p><h2 class="display text-3xl md:text-4xl font-extrabold leading-tight mb-4">Get a fast quote for {place}.</h2>
 <p class="text-bone/60 mb-4">Tell us what you need hauled and we will text you a price. Or call <a class="text-ember font-semibold" href="tel:{c['phone_tel']}">{c['phone_display']}</a>, or text photos to the same number.</p>
 <p class="text-sm text-ember font-semibold">★ Veteran and first responder discount available</p></div>
@@ -206,7 +206,7 @@ def work_page(S):
 <section class="pb-20"><div class="max-w-6xl mx-auto px-5 grid lg:grid-cols-3 gap-8 items-start">
 <div class="lg:col-span-2"><div id="jobGrid" class="grid sm:grid-cols-2 gap-5"></div><div class="text-center mt-8"><button id="loadMore" type="button" class="hidden rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition">Show all jobs</button></div></div>
 <aside class="lg:sticky lg:top-24 rounded-3xl border border-line bg-slate2 p-5" aria-label="Recent jobs"><h2 class="display text-xl font-extrabold mb-3">Recent jobs</h2><div id="jobSide" class="space-y-1"></div><a href="#quote" class="mt-4 block text-center rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-6 py-3 transition">Get a free quote</a></aside></div></section>
-{reviews_section(S)}{quote_form(S, hub + ", TX")}{seed_json(S)}</main>"""
+{reviews_section(S)}{quote_form(S, hub + ", TX", "quote")}{seed_json(S)}</main>"""
     S.write(path, head(S, title, desc, path, schema, MAP_CSS) + header(S) + body + footer(S))
 
 def crew_page(S):
