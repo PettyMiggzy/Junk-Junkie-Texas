@@ -102,28 +102,44 @@ def footer(S):
 def quote_form(S, place):
     c = S.c; inp = 'bg-ink border border-line rounded-xl px-4 py-3 w-full focus:outline-none focus:border-ember'
     opts = "".join(f"<option>{o}</option>" for o in HOME_SERVICES)
-    return f'''<section id="quote" class="py-20 bg-slate2 border-y border-line"><div class="max-w-5xl mx-auto px-5 grid lg:grid-cols-2 gap-10">
+    return f'''<section id="quote-more" class="py-20 bg-slate2 border-y border-line"><div class="max-w-5xl mx-auto px-5 grid lg:grid-cols-2 gap-10">
 <div><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">Free quote</p><h2 class="display text-3xl md:text-4xl font-extrabold leading-tight mb-4">Get a fast quote for {place}.</h2>
 <p class="text-bone/60 mb-4">Tell us what you need hauled and we will text you a price. Or call <a class="text-ember font-semibold" href="tel:{c['phone_tel']}">{c['phone_display']}</a>, or text photos to the same number.</p>
 <p class="text-sm text-ember font-semibold">★ Veteran and first responder discount available</p></div>
-<form id="quoteForm" class="grid sm:grid-cols-2 gap-3" aria-label="Quote request" data-key="{c['web3forms_key']}" data-email="{c['email']}" data-site="{c['name']}">
+<form data-quote class="grid sm:grid-cols-2 gap-3" aria-label="Quote request" data-key="{c['web3forms_key']}" data-email="{c['email']}" data-site="{c['name']}">
 <input type="hidden" name="access_key" value="{c['web3forms_key']}"><input type="hidden" name="subject" value="Quote request: {S.c['name']} ({place})"><input type="hidden" name="from_name" value="{c['name']} website"><input type="checkbox" name="botcheck" style="display:none">
 <input required name="first_name" aria-label="First name" placeholder="First name" class="{inp}"><input required name="last_name" aria-label="Last name" placeholder="Last name" class="{inp}">
 <select required name="service" aria-label="Service" class="{inp} sm:col-span-2"><option value="">Choose service</option>{opts}</select>
 <input required name="phone" type="tel" aria-label="Phone" placeholder="Phone number" class="{inp}"><input required name="email" type="email" aria-label="Email" placeholder="Email" class="{inp}">
 <input required name="address" aria-label="Address" placeholder="Address" class="{inp} sm:col-span-2"><input required name="city" aria-label="City" placeholder="City" class="{inp}"><input required name="zip" aria-label="Zip" placeholder="Zip code" class="{inp}">
 <textarea name="message" rows="3" aria-label="Message" placeholder="Message (optional)" class="{inp} sm:col-span-2"></textarea>
-<button type="submit" id="formBtn" class="sm:col-span-2 rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition">Get My Fast Quote</button><p id="formMsg" class="sm:col-span-2 text-sm text-center text-bone/60" role="status"></p></form></div></section>'''
+<button type="submit" data-btn class="sm:col-span-2 rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition">Get My Fast Quote</button><p data-msg class="sm:col-span-2 text-sm text-center text-bone/60" role="status"></p></form></div></section>'''
+
+def top_form(S, place, anchor=True):
+    c = S.c; inp = 'bg-ink border border-line rounded-xl px-4 py-3 w-full text-base focus:outline-none focus:border-ember'
+    opts = "".join(f"<option>{o}</option>" for o in HOME_SERVICES)
+    return f"""<div {'id="quote" ' if anchor else ''}class="rounded-3xl bg-slate2/90 backdrop-blur border border-line p-5 sm:p-6 shadow-2xl scroll-mt-24">
+<div class="display text-xl sm:text-2xl font-extrabold leading-tight">Get your free quote in minutes</div>
+<p class="text-sm text-bone/60 mt-1 mb-3 sm:mb-4"><span class="hidden sm:inline">Tell us what you need. We'll text you a price. </span><span class="text-ember font-semibold">10% off for veterans, seniors and first responders.</span></p>
+<form data-quote class="grid gap-3" aria-label="Quick quote request" data-key="{c['web3forms_key']}" data-email="{c['email']}" data-site="{c['name']}">
+<input type="hidden" name="access_key" value="{c['web3forms_key']}"><input type="hidden" name="subject" value="Quote request: {c['name']} ({place})"><input type="hidden" name="from_name" value="{c['name']} website"><input type="checkbox" name="botcheck" style="display:none">
+<input required name="name" autocomplete="name" aria-label="Your name" placeholder="Your name" class="{inp}">
+<input required name="phone" type="tel" inputmode="tel" autocomplete="tel" aria-label="Phone number" placeholder="Phone number" class="{inp}">
+<div class="grid grid-cols-5 gap-3"><input required name="zip" inputmode="numeric" autocomplete="postal-code" aria-label="Zip code" placeholder="Zip" class="{inp} col-span-2"><select name="service" aria-label="What do you need" class="{inp} col-span-3"><option value="">Service needed</option>{opts}</select></div>
+<button type="submit" data-btn class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 text-base transition glow">Get My Free Quote</button>
+<p data-msg class="text-sm text-center text-bone/60" role="status"></p></form>
+<div class="text-center text-sm text-bone/60">or call / text <a class="text-ember font-semibold" href="tel:{c['phone_tel']}">{c['phone_display']}</a> with photos</div></div>"""
 
 def faq_html(faq): return '<div class="divide-y divide-line">' + "".join(f'<details class="py-5 group"><summary class="display font-bold text-lg cursor-pointer list-none flex justify-between gap-4">{q}<span class="text-ember group-open:rotate-45 transition">+</span></summary><p class="text-bone/60 mt-3">{a}</p></details>' for q, a in faq) + "</div>"
 def crumb_html(parts):
     out = [f'<a href="{u}" class="hover:text-ember">{n}</a>' if i < len(parts)-1 else f'<span class="text-bone/80">{n}</span>' for i, (n, u) in enumerate(parts)]
     return '<nav aria-label="Breadcrumb" class="text-xs text-bone/50 mb-6 flex flex-wrap gap-2">' + ' <span>/</span> '.join(out) + "</nav>"
-def hero_small(S, h1, sub, crumbs_html):
-    c = S.c
-    return f'''<section class="relative pt-28 pb-16 md:pt-36 md:pb-24 overflow-hidden"><img src="/assets/hero.webp" width="1280" height="720" alt="" class="absolute inset-0 w-full h-full object-cover opacity-35"><div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/80 to-ink/30"></div>
-<div class="relative max-w-5xl mx-auto px-5">{crumbs_html}<h1 class="display text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.02] mb-5">{h1}</h1><p class="text-lg md:text-xl text-bone/75 max-w-2xl mb-6">{sub}</p>
-<div class="flex flex-col sm:flex-row gap-3"><a href="#quote" class="inline-flex justify-center rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition glow">Get a Free Quote</a><a href="tel:{c['phone_tel']}" class="inline-flex justify-center rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-8 py-4 transition">Call {c['phone_display']}</a></div></div></section>'''
+def hero_small(S, h1, sub, crumbs_html, place=None):
+    c = S.c; place = place or (S.hub["name"] + ", TX")
+    return f"""<section class="relative pt-24 pb-10 md:pt-32 md:pb-16 overflow-hidden"><img src="/assets/hero.webp" width="1280" height="720" alt="" class="absolute inset-0 w-full h-full object-cover opacity-30"><div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/85 to-ink/40"></div>
+<div class="relative max-w-6xl mx-auto px-5 grid lg:grid-cols-12 gap-8 items-start"><div class="lg:col-span-7">{crumbs_html}<h1 class="display text-3xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.03] mb-4">{h1}</h1><p class="hidden sm:block text-base md:text-xl text-bone/75 max-w-2xl mb-6">{sub}</p>
+<div class="hidden sm:flex flex-col sm:flex-row gap-3"><a href="tel:{c['phone_tel']}" class="inline-flex justify-center rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-8 py-4 transition">Call {c['phone_display']}</a></div></div>
+<div class="lg:col-span-5">{top_form(S, place)}</div></div></section>"""
 
 MAP_CSS = '<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.css">'
 LEAFLET_JS = '<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.js" defer></script>'
@@ -232,14 +248,14 @@ def home(S):
     schema = ld(business_schema(S), {"@context": "https://schema.org", "@type": "WebSite", "name": c["name"], "url": S.base + "/", "publisher": {"@id": S.biz_id}}, faq_schema(faq))
     svc = "".join(f'<a href="{S.svc_path(s)}" class="rounded-2xl bg-slate2 border border-line p-6 hover:border-ember/60 transition"><div class="display text-ember font-extrabold mb-2">{s["icon"]}</div><h3 class="display font-bold text-lg mb-1">{s["name"]}</h3><p class="text-sm text-bone/60">{s["blurb"]}</p></a>' for s in SERVICES)
     areas = "".join(f'<a href="{S.city_path(x)}" class="rounded-2xl border border-line bg-ink p-5 hover:border-ember/60 transition"><div class="font-semibold">{x["name"]}</div><div class="text-xs text-bone/50 mt-1">{x["county"]} County</div></a>' for x in S.cities)
-    body = f'''<main><section class="relative min-h-[100svh] flex items-end md:items-center pt-24 pb-32 md:pb-24 overflow-hidden"><img src="/assets/hero.webp" width="1280" height="720" alt="" class="absolute inset-0 w-full h-full object-cover opacity-55" fetchpriority="high">{reel_html(S)}<div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/10"></div>
-<div class="relative max-w-7xl mx-auto px-5 w-full grid lg:grid-cols-12 gap-10 items-center"><div class="lg:col-span-7">
-<p class="inline-flex items-center gap-2 text-xs font-semibold tracking-widest uppercase text-ember mb-6"><span class="w-2 h-2 rounded-full bg-ember animate-pulse"></span> Serving {", ".join(names)}</p>
-<h1 class="display text-5xl sm:text-6xl lg:text-7xl font-extrabold leading-[0.95] mb-6">Junk Removal in <span class="text-ember">{hub}, TX</span></h1>
-<p class="text-lg md:text-xl text-bone/75 max-w-xl mb-8">Reliable junk removal, debris cleanup, hoarder cleanouts, appliance and furniture removal, and moving. {S.hub["note"]}</p>
-<div class="flex flex-col sm:flex-row gap-3"><a href="#quote" class="inline-flex justify-center rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition glow">Get a Free Quote</a><a href="tel:{c['phone_tel']}" class="inline-flex justify-center rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-8 py-4 transition">Call {c['phone_display']}</a></div>
-<p class="mt-8 text-sm text-ember font-semibold">★ Veteran and first responder discount available</p></div>
-<div class="lg:col-span-5 hidden lg:flex justify-center"><div class="logo-shine"><img src="/assets/logo.png" width="360" height="360" alt="{c['name']} logo" class="w-[22rem]"></div></div></div></section>
+    body = f'''<main><section class="relative flex items-center pt-20 pb-10 md:pt-28 md:pb-20 overflow-hidden"><img src="/assets/hero.webp" width="1280" height="720" alt="" class="absolute inset-0 w-full h-full object-cover opacity-55" fetchpriority="high">{reel_html(S)}<div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/10"></div>
+<div class="relative max-w-7xl mx-auto px-5 w-full grid lg:grid-cols-12 gap-8 lg:gap-10 items-center"><div class="lg:col-span-7">
+<p class="inline-flex items-center gap-2 text-[11px] sm:text-xs font-semibold tracking-widest uppercase text-ember mb-3 sm:mb-6"><span class="w-2 h-2 rounded-full bg-ember animate-pulse"></span> Serving {", ".join(names)}</p>
+<div class="hidden sm:block mb-5"><div class="logo-shine"><img src="/assets/logo.png" width="120" height="120" alt="{c['name']} logo" class="w-28 h-28"></div></div>
+<h1 class="display text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-[0.98] mb-4 sm:mb-5">Junk Removal in <span class="text-ember">{hub}, TX</span></h1>
+<p class="hidden sm:block text-base md:text-xl text-bone/75 max-w-xl mb-6">Reliable junk removal, debris cleanup, hoarder cleanouts, appliance and furniture removal, and moving. {S.hub["note"]}</p>
+<div class="hidden sm:flex gap-3"><a href="tel:{c['phone_tel']}" class="inline-flex justify-center rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-8 py-4 transition">Call {c['phone_display']}</a></div></div>
+<div class="lg:col-span-5">{top_form(S, hub + ", TX")}</div></section>
 <section id="services" class="py-24"><div class="max-w-7xl mx-auto px-5"><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">What we do</p><h2 class="display text-4xl md:text-5xl font-extrabold leading-tight mb-6 max-w-3xl">If it needs to go, we haul it.</h2><p class="text-bone/60 text-lg max-w-2xl mb-12">{S.hub["housing"]}</p><div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">{svc}</div></div></section>
 {pricing_section(S)}
 {home_jobs(S)}
