@@ -11,7 +11,7 @@ TODAY = datetime.date.today().isoformat()
 YEAR = datetime.date.today().year
 SITES = {p.stem: json.loads(p.read_text()) for p in sorted((ROOT / "sites").glob("*.json"))}
 ROUTES = json.loads((ROOT / "shared" / "routes.json").read_text())
-HOME_SERVICES = ["Junk Removal", "Debris Removal", "Hoarder Cleanouts", "Appliance Removal", "Furniture Removal", "Appliance Installation", "Local Moving", "Long-Distance Moving", "Trampoline Removal", "Basketball Goal Removal"]
+HOME_SERVICES = [s["name"] for s in SERVICES]
 
 ROUTES_JS = """// GENERATED from shared/routes.json by build.py. Do not edit.
 const SITES = """ + json.dumps(ROUTES) + """;
@@ -243,9 +243,9 @@ def home(S):
            ("How do I get a quote?", f"Use the form, call or text photos to {c['phone_display']}. We give a firm price before we start."),
            ("What can't you take?", "Hazardous materials such as paint, chemicals, asbestos and fuel."),
            ("Do you offer discounts?", "Yes, we offer a veteran and first responder discount. Mention it when you call."),
-           ("Do you also move and install appliances?", "Yes. We offer local moving, long-distance moving and appliance installation as well as junk removal.")]
+           ("What do you haul?", "21 services in all: junk removal, cleanouts, furniture and appliances, and debris removal for construction, yard, storm, roofing, remodeling, demolition and brush.")]
     title = f"Junk Removal {hub}, TX | Debris, Hoarder & Appliance Removal | {c['name']}"
-    desc = f"Junk removal in {hub}, TX and {others}. Debris removal, hoarder cleanouts, appliance and furniture removal, moving. Veteran and first responder discount. Call {c['phone_display']}."
+    desc = f"Junk removal in {hub}, TX and {others}. Debris removal, cleanouts, appliance and furniture removal. Veteran and first responder discount. Call {c['phone_display']}."
     schema = ld(business_schema(S), {"@context": "https://schema.org", "@type": "WebSite", "name": c["name"], "url": S.base + "/", "publisher": {"@id": S.biz_id}}, faq_schema(faq))
     svc = "".join(f'<a href="{S.svc_path(s)}" class="rounded-2xl bg-slate2 border border-line p-6 hover:border-ember/60 transition"><div class="display text-ember font-extrabold mb-2">{s["icon"]}</div><h3 class="display font-bold text-lg mb-1">{s["name"]}</h3><p class="text-sm text-bone/60">{s["blurb"]}</p></a>' for s in SERVICES)
     areas = "".join(f'<a href="{S.city_path(x)}" class="rounded-2xl border border-line bg-ink p-5 hover:border-ember/60 transition"><div class="font-semibold">{x["name"]}</div><div class="text-xs text-bone/50 mt-1">{x["county"]} County</div></a>' for x in S.cities)
@@ -254,7 +254,7 @@ def home(S):
 <p class="inline-flex items-center gap-2 text-[11px] sm:text-xs font-semibold tracking-widest uppercase text-ember mb-3 sm:mb-6"><span class="w-2 h-2 rounded-full bg-ember animate-pulse"></span> Serving {", ".join(names)}</p>
 <div class="hidden sm:block mb-5"><div class="logo-shine"><img src="/assets/logo.png" width="120" height="120" alt="{c['name']} logo" class="w-28 h-28"></div></div>
 <h1 class="display text-4xl sm:text-6xl lg:text-7xl font-extrabold leading-[0.98] mb-4 sm:mb-5">Junk Removal in <span class="text-ember">{hub}, TX</span></h1>
-<p class="hidden sm:block text-base md:text-xl text-bone/75 max-w-xl mb-6">Reliable junk removal, debris cleanup, hoarder cleanouts, appliance and furniture removal, and moving. {S.hub["note"]}</p>
+<p class="hidden sm:block text-base md:text-xl text-bone/75 max-w-xl mb-6">Reliable junk removal, debris cleanup, cleanouts, appliance and furniture removal. {S.hub["note"]}</p>
 <div class="hidden sm:flex gap-3"><a href="tel:{c['phone_tel']}" class="inline-flex justify-center rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-8 py-4 transition">Call {c['phone_display']}</a></div></div>
 <div class="lg:col-span-5">{top_form(S, hub + ", TX")}</div></section>
 <section id="services" class="py-24"><div class="max-w-7xl mx-auto px-5"><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">What we do</p><h2 class="display text-4xl md:text-5xl font-extrabold leading-tight mb-6 max-w-3xl">If it needs to go, we haul it.</h2><p class="text-bone/60 text-lg max-w-2xl mb-12">{S.hub["housing"]}</p><div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">{svc}</div></div></section>
@@ -272,7 +272,7 @@ def city_page(S, key):
     x = CITIES[key]; c = S.c; path = S.city_path(x); n = x["name"]
     near = [y for y in S.cities if y is not x]
     title = f"Junk Removal {n}, TX | Same-Day Hauling & Cleanouts | {c['name']}"
-    desc = f"Junk removal in {n}, Texas ({x['county']} County). Furniture, appliances, debris, cleanouts and moving with upfront pricing. Call {c['phone_display']}."
+    desc = f"Junk removal in {n}, Texas ({x['county']} County). Furniture, appliances, debris and cleanouts with upfront pricing. Call {c['phone_display']}."
     faq = [(f"How do I get a junk removal quote in {n}?", f"Text photos to {c['phone_display']}, call, or use the form. We give a firm price before we start."),
            (f"What do you haul in {n}?", f"{x['jobs'].capitalize()}, plus everything else on our service list."),
            ("Do you offer a veteran or first responder discount?", "Yes. Mention it when you call or in the form."),
@@ -345,14 +345,14 @@ def build_site(S):
     cc = "".join(f'<a href="{S.city_path(x)}" class="rounded-2xl bg-slate2 border border-line p-6 hover:border-ember/60 transition"><h2 class="display font-bold text-xl mb-1">Junk Removal in {x["name"]}</h2><p class="text-sm text-bone/60">{x["county"]} County · {x["zips"]}</p></a>' for x in S.cities)
     hub_page(S, "/areas/", f"Junk Removal Service Areas | {hub} & Nearby, TX | {c['name']}", f"We serve {', '.join(x['name'] for x in S.cities)}, Texas. Call {c['phone_display']}.", "Junk Removal Service Areas", f"Serving {', '.join(x['name'] for x in S.cities)}, Texas.", cc, "Service Areas", map_section(S), MAP_CSS)
     sc = "".join(f'<a href="{S.svc_path(s)}" class="rounded-2xl bg-slate2 border border-line p-6 hover:border-ember/60 transition"><div class="display text-ember font-extrabold mb-2">{s["icon"]}</div><h2 class="display font-bold text-xl mb-1">{s["name"]}</h2><p class="text-sm text-bone/60">{s["blurb"]}</p></a>' for s in SERVICES)
-    hub_page(S, "/services/", f"Junk Removal Services {hub}, TX | {c['name']}", f"Junk removal, debris removal, hoarder cleanouts, appliance removal, moving and more in {hub}, TX. Call {c['phone_display']}.", "Our Services", "From a single couch to a whole-property cleanout.", sc, "Services")
+    hub_page(S, "/services/", f"Junk Removal Services {hub}, TX | {c['name']}", f"Junk removal, debris removal, cleanouts, appliance removal and more in {hub}, TX. Call {c['phone_display']}.", "Our Services", "From a single couch to a whole-property cleanout.", sc, "Services")
     work_page(S); crew_page(S); admin_page(S)
     # site files
     urls = [("/", "1.0"), ("/areas/", "0.8"), ("/services/", "0.8"), ("/our-work/", "0.6")] + [(S.svc_path(s), "0.8") for s in SERVICES] + [(S.city_path(x), "0.9" if x is S.hub else "0.7") for x in S.cities]
     (S.out / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"<url><loc>{S.base}{u}</loc><lastmod>{TODAY}</lastmod><changefreq>weekly</changefreq><priority>{p}</priority></url>\n" for u, p in urls) + "</urlset>\n")
     (S.out / "robots.txt").write_text(f"User-agent: *\nAllow: /\nDisallow: /crew/\nDisallow: /api/\nDisallow: /admin/\n\nSitemap: {S.base}/sitemap.xml\n")
     (S.out / "site.webmanifest").write_text(json.dumps({"name": c["name"], "short_name": "Junk Junkies", "start_url": "/", "display": "standalone", "background_color": "#0B0D10", "theme_color": "#14F500", "icons": [{"src": "/assets/logo-icon.png", "sizes": "256x256", "type": "image/png"}]}))
-    (S.out / "llms.txt").write_text(f"# {c['name']}\n\n> Junk removal, debris removal, hoarder cleanouts, appliance removal and moving in {', '.join(x['name'] for x in S.cities)}, Texas. Phone/text: {c['phone_display']}.\n\n## Services\n" + "".join(f"- [{s['name']}]({S.base}{S.svc_path(s)}): {s['blurb']}\n" for s in SERVICES) + "\n## Areas\n" + "".join(f"- [{x['name']}, TX]({S.base}{S.city_path(x)})\n" for x in S.cities))
+    (S.out / "llms.txt").write_text(f"# {c['name']}\n\n> Junk removal, debris removal, cleanouts, appliance removal and more in {', '.join(x['name'] for x in S.cities)}, Texas. Phone/text: {c['phone_display']}.\n\n## Services\n" + "".join(f"- [{s['name']}]({S.base}{S.svc_path(s)}): {s['blurb']}\n" for s in SERVICES) + "\n## Areas\n" + "".join(f"- [{x['name']}, TX]({S.base}{S.city_path(x)})\n" for x in S.cities))
     (S.out / "vercel.json").write_text(json.dumps({"cleanUrls": True, "trailingSlash": True, "functions": {"api/*.js": {"maxDuration": 20}}, "crons": [{"path": "/api/gbp-sync", "schedule": "0 13 * * *"}], "headers": [{"source": "/assets/(.*)", "headers": [{"key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800"}]}, {"source": "/(.*)", "headers": [{"key": "X-Content-Type-Options", "value": "nosniff"}, {"key": "Referrer-Policy", "value": "strict-origin-when-cross-origin"}, {"key": "X-Frame-Options", "value": "SAMEORIGIN"}]}]}, indent=2))
     (S.out / "404.html").write_text(head(S, f"Page not found | {c['name']}", "Page not found.", "/404", "", '<meta name="robots" content="noindex">').replace('<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">', "") + header(S) + f'<main class="min-h-[70vh] grid place-items-center text-center px-5 pt-24"><div><h1 class="display text-5xl font-extrabold mb-4">Page not found.</h1><p class="text-bone/60 mb-6">But we can still haul your junk.</p><a href="/" class="rounded-full bg-ember text-ink font-bold px-8 py-4">Back to home</a></div></main>' + footer(S))
     print(f"{S.slug}: {len(urls)} pages -> dist/{S.slug}")
