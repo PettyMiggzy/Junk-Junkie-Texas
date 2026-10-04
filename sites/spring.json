@@ -1,0 +1,24 @@
+{
+  "phone_display": "(346) 413-9644",
+  "phone_tel": "+13464139644",
+  "email": "junkjunkiestexas@gmail.com",
+  "web3forms_key": "YOUR_WEB3FORMS_KEY",
+  "street": "5206 Clarkston Lane",
+  "street_city": "Spring",
+  "zip": "77379",
+  "state": "TX",
+  "name": "Junk Junkies Texas",
+  "short": "Spring",
+  "domain": "junkjunkiestexas.com",
+  "hub": "spring",
+  "hub_name": "Spring",
+  "cities": [
+    "spring",
+    "klein",
+    "the-woodlands",
+    "humble"
+  ],
+  "logo": "spring.png",
+  "slug": "spring",
+  "domain_is_placeholder": false
+}

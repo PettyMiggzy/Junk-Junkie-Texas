@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://junkjunkiestexas.com/sitemap.xml
