@@ -38,5 +38,5 @@ For each site: Add New Project > this repo > Framework **Other** > Root Director
 ## Hosting status
 - Vercel projects: `junkjunkies-spring`, `junkjunkies-tomball`, `junkjunkies-cypress`, `junkjunkies-college-station` (root dir `dist/<site>`, production branch `main`).
 - Shared Neon database `junkjunkies` (limited role `junkjunkies_app`); every job row has a `site` column. One Blob store per project.
-- `DATABASE_URL`, `CREW_PIN`, `BLOB_READ_WRITE_TOKEN` are set in each Vercel project. `GOOGLE_PLACES_KEY` / `GOOGLE_PLACE_ID` still to add for reviews.
+- `DATABASE_URL`, `CREW_PIN`, `BLOB_READ_WRITE_TOKEN` are set in each Vercel project. `GOOGLE_PLACES_KEY` is set on all projects; `GOOGLE_PLACE_ID` is set on Spring (ChIJt1oNIK6RSYYRSdYZxMjE2tk). Tomball, Cypress and College Station need their own Place IDs once those Google profiles exist.
 - `junkjunkiestexas.com` is intentionally NOT attached yet (live WordPress site).
