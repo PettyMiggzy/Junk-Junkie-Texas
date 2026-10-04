@@ -1,1 +1,62 @@
-[]
+[
+ {
+  "title": "Refrigerator prepped for the move",
+  "service": "Local Moving",
+  "description": "Wrapped, padded and loaded so it arrives without a scratch. We handle the heavy lifting.",
+  "after_url": "/assets/jobs/jj-011.webp"
+ },
+ {
+  "title": "Bagged-up room cleanout",
+  "service": "Junk Removal",
+  "description": "Loaded up and hauled away in one trip. We sweep up when we are done.",
+  "after_url": "/assets/jobs/jj-019.webp"
+ },
+ {
+  "title": "Refrigerator ready to go",
+  "service": "Local Moving",
+  "description": "Wrapped, padded and loaded so it arrives without a scratch. We handle the heavy lifting.",
+  "after_url": "/assets/jobs/jj-023.webp"
+ },
+ {
+  "title": "Curbside pile hauled away",
+  "service": "Junk Removal",
+  "description": "Loaded up and hauled away in one trip. We sweep up when we are done.",
+  "after_url": "/assets/jobs/jj-030.webp"
+ },
+ {
+  "title": "Wrapped furniture on the hand truck",
+  "service": "Local Moving",
+  "description": "Wrapped, padded and loaded so it arrives without a scratch. We handle the heavy lifting.",
+  "after_url": "/assets/jobs/jj-035.webp"
+ },
+ {
+  "title": "Appliances wrapped and secured in the trailer",
+  "service": "Local Moving",
+  "description": "Wrapped, padded and loaded so it arrives without a scratch. We handle the heavy lifting.",
+  "after_url": "/assets/jobs/jj-040.webp"
+ },
+ {
+  "title": "Crew at work on a driveway job",
+  "service": "Junk Removal",
+  "description": "Loaded up and hauled away in one trip. We sweep up when we are done.",
+  "after_url": "/assets/jobs/jj-047.webp"
+ },
+ {
+  "title": "Hand trucks and wrapped pieces",
+  "service": "Local Moving",
+  "description": "Wrapped, padded and loaded so it arrives without a scratch. We handle the heavy lifting.",
+  "after_url": "/assets/jobs/jj-052.webp"
+ },
+ {
+  "title": "Recliner ready for pickup",
+  "service": "Furniture Removal",
+  "description": "Picked up and hauled off. No lifting or loading on your end.",
+  "after_url": "/assets/jobs/jj-058.webp"
+ },
+ {
+  "title": "Lumber and decking debris hauled away",
+  "service": "Debris Removal",
+  "description": "Debris cleared out and hauled away so the space is ready to use.",
+  "after_url": "/assets/jobs/jj-062.webp"
+ }
+]

@@ -1,1 +1,44 @@
-[]
+[
+ {
+  "title": "Recliner ready for pickup",
+  "service": "Furniture Removal",
+  "description": "Picked up and hauled off. No lifting or loading on your end.",
+  "after_url": "/assets/jobs/jj-008.webp"
+ },
+ {
+  "title": "Sectional couch ready for pickup",
+  "service": "Furniture Removal",
+  "description": "Picked up and hauled off. No lifting or loading on your end.",
+  "after_url": "/assets/jobs/jj-020.webp"
+ },
+ {
+  "title": "Truck loaded with boxes and furniture",
+  "service": "Local Moving",
+  "description": "Wrapped, padded and loaded so it arrives without a scratch. We handle the heavy lifting.",
+  "after_url": "/assets/jobs/jj-037.webp"
+ },
+ {
+  "title": "Trailer packed floor to ceiling",
+  "service": "Local Moving",
+  "description": "Wrapped, padded and loaded so it arrives without a scratch. We handle the heavy lifting.",
+  "after_url": "/assets/jobs/jj-041.webp"
+ },
+ {
+  "title": "Couch on the trailer",
+  "service": "Furniture Removal",
+  "description": "Picked up and hauled off. No lifting or loading on your end.",
+  "after_url": "/assets/jobs/jj-048.webp"
+ },
+ {
+  "title": "Dresser wrapped and protected",
+  "service": "Local Moving",
+  "description": "Wrapped, padded and loaded so it arrives without a scratch. We handle the heavy lifting.",
+  "after_url": "/assets/jobs/jj-059.webp"
+ },
+ {
+  "title": "Yard bags ready to haul",
+  "service": "Junk Removal",
+  "description": "Loaded up and hauled away in one trip. We sweep up when we are done.",
+  "after_url": "/assets/jobs/jj-065.webp"
+ }
+]

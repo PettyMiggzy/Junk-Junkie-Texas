@@ -1,1 +1,44 @@
-[]
+[
+ {
+  "title": "Cabinet wrapped for transport",
+  "service": "Local Moving",
+  "description": "Wrapped, padded and loaded so it arrives without a scratch. We handle the heavy lifting.",
+  "after_url": "/assets/jobs/jj-021.webp"
+ },
+ {
+  "title": "Couch loaded on the trailer",
+  "service": "Furniture Removal",
+  "description": "Picked up and hauled off. No lifting or loading on your end.",
+  "after_url": "/assets/jobs/jj-033.webp"
+ },
+ {
+  "title": "Carrying furniture down the stairs",
+  "service": "Local Moving",
+  "description": "Wrapped, padded and loaded so it arrives without a scratch. We handle the heavy lifting.",
+  "after_url": "/assets/jobs/jj-038.webp"
+ },
+ {
+  "title": "Dresser wrapped for transport",
+  "service": "Local Moving",
+  "description": "Wrapped, padded and loaded so it arrives without a scratch. We handle the heavy lifting.",
+  "after_url": "/assets/jobs/jj-049.webp"
+ },
+ {
+  "title": "Crew member on a job",
+  "service": "Local Moving",
+  "description": "Wrapped, padded and loaded so it arrives without a scratch. We handle the heavy lifting.",
+  "after_url": "/assets/jobs/jj-060.webp"
+ },
+ {
+  "title": "Desk ready for pickup",
+  "service": "Furniture Removal",
+  "description": "Picked up and hauled off. No lifting or loading on your end.",
+  "after_url": "/assets/jobs/jj-074.webp"
+ },
+ {
+  "title": "Trailer loaded with boxes and fabric",
+  "service": "Junk Removal",
+  "description": "Loaded up and hauled away in one trip. We sweep up when we are done.",
+  "after_url": "/assets/jobs/jj-079.webp"
+ }
+]
