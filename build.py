@@ -331,8 +331,8 @@ def build_site(S):
     import numpy as np
     a = np.asarray(logo.resize((900, 900), Image.LANCZOS)).astype(float)
     Image.fromarray(np.dstack([a, np.clip(a.max(axis=2) * 3.0, 0, 255)]).astype("uint8"), "RGBA").save(S.out / "assets/logo.png", optimize=True)
-    w, h = logo.size; head_img = logo.crop((int(w*.16), int(h*.05), int(w*.84), int(h*.56)))
-    sq = Image.new("RGB", (max(head_img.size),)*2, (11, 13, 16)); sq.paste(head_img, ((sq.size[0]-head_img.size[0])//2, (sq.size[1]-head_img.size[1])//2))
+    w, h = logo.size; head_img = logo.crop((int(w*.19), int(h*.05), int(w*.81), int(h*.49)))
+    side = int(max(head_img.size) * 1.08); sq = Image.new("RGB", (side, side), (0, 0, 0)); sq.paste(head_img, ((sq.size[0]-head_img.size[0])//2, (sq.size[1]-head_img.size[1])//2))
     sq.resize((256, 256)).save(S.out / "assets/logo-icon.png", optimize=True); sq.resize((64, 64)).save(S.out / "favicon.png")
     from PIL import ImageEnhance
     bg = Image.open(ROOT / "shared/hero.webp").convert("RGB").resize((1200, 675)).crop((0, 22, 1200, 652)); bg = ImageEnhance.Brightness(bg).enhance(.5).convert("RGBA")
