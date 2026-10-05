@@ -73,7 +73,7 @@ def head(S, title, desc, path, schema="", extra=""):
 <meta property="og:type" content="website"><meta property="og:site_name" content="{S.c['name']}"><meta property="og:locale" content="en_US"><meta property="og:title" content="{title}"><meta property="og:description" content="{desc}"><meta property="og:url" content="{u}">
 <meta property="og:image" content="{S.og}"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630">
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{title}"><meta name="twitter:description" content="{desc}"><meta name="twitter:image" content="{S.og}">
-<link rel="icon" type="image/png" href="/favicon.png?v=2"><link rel="apple-touch-icon" href="/assets/logo-icon.png?v=2"><link rel="manifest" href="/site.webmanifest">
+<link rel="icon" href="/favicon.ico?v=3" sizes="any"><link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=3"><link rel="icon" type="image/png" href="/favicon.png?v=3"><link rel="apple-touch-icon" href="/assets/logo-icon.png?v=2"><link rel="manifest" href="/site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600&display=swap"><link rel="stylesheet" href="/assets/site.css">{extra}{schema}</head><body class="antialiased">'''
 
@@ -333,7 +333,7 @@ def build_site(S):
     Image.fromarray(np.dstack([a, np.clip(a.max(axis=2) * 3.0, 0, 255)]).astype("uint8"), "RGBA").save(S.out / "assets/logo.png", optimize=True)
     w, h = logo.size; head_img = logo.crop((int(w*.19), int(h*.05), int(w*.81), int(h*.49)))
     side = int(max(head_img.size) * 1.28); sq = Image.new("RGB", (side, side), (0, 0, 0)); sq.paste(head_img, ((sq.size[0]-head_img.size[0])//2, (sq.size[1]-head_img.size[1])//2))
-    sq.resize((256, 256)).save(S.out / "assets/logo-icon.png", optimize=True); sq.resize((64, 64)).save(S.out / "favicon.png")
+    sq.resize((256, 256)).save(S.out / "assets/logo-icon.png", optimize=True); sq.resize((64, 64)).save(S.out / "favicon.png"); sq.resize((192, 192), Image.LANCZOS).save(S.out / "favicon-192.png", optimize=True); sq.resize((256, 256), Image.LANCZOS).save(S.out / "favicon.ico", sizes=[(16, 16), (32, 32), (48, 48)])
     logo.resize((336, 336), Image.LANCZOS).save(S.out / "assets/logo-badge.png", optimize=True)  # the full location logo, city name and phone included, for the header
     from PIL import ImageEnhance
     bg = Image.open(ROOT / "shared/hero.webp").convert("RGB").resize((1200, 675)).crop((0, 22, 1200, 652)); bg = ImageEnhance.Brightness(bg).enhance(.5).convert("RGBA")
