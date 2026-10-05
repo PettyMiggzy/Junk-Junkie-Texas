@@ -80,7 +80,7 @@ def head(S, title, desc, path, schema="", extra=""):
 def header(S):
     c = S.c
     return f'''<header class="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-ink/80 border-b border-line"><div class="max-w-7xl mx-auto px-5 h-16 flex items-center justify-between">
-<a href="/" class="flex items-center gap-2.5"><img src="/assets/logo-icon.png" width="40" height="40" alt="{c['name']} logo" class="h-10 w-10 rounded-lg logo-pulse"><span class="display block max-w-[11rem] sm:max-w-none text-[11px] sm:text-base font-extrabold leading-[1.15]">{S.c['name']}</span></a>
+<a href="/" class="flex items-center gap-2.5"><img src="/assets/logo-icon.png" width="44" height="44" alt="{c['name']} logo" class="h-11 w-11 rounded-xl logo-pulse"><span class="display block max-w-[11rem] sm:max-w-none text-[11px] sm:text-base font-extrabold leading-[1.15]">{S.c['name']}</span></a>
 <nav class="hidden md:flex items-center gap-8 text-sm text-bone/70" aria-label="Main"><a href="/services/" class="hover:text-bone">Services</a><a href="/areas/" class="hover:text-bone">Service Areas</a><a href="/our-work/" class="hover:text-bone">Our Work</a><a href="/#faq" class="hover:text-bone">FAQ</a></nav>
 <div class="flex items-center gap-3"><a href="tel:{c['phone_tel']}" class="hidden sm:inline-flex text-sm font-semibold text-bone/90 hover:text-ember">{c['phone_display']}</a><a href="#quote" class="inline-flex whitespace-nowrap rounded-full bg-ember hover:bg-emberDark text-ink font-bold text-sm px-4 sm:px-5 py-2.5 transition">Free Quote</a></div></div></header>'''
 
@@ -332,7 +332,7 @@ def build_site(S):
     a = np.asarray(logo.resize((900, 900), Image.LANCZOS)).astype(float)
     Image.fromarray(np.dstack([a, np.clip(a.max(axis=2) * 3.0, 0, 255)]).astype("uint8"), "RGBA").save(S.out / "assets/logo.png", optimize=True)
     w, h = logo.size; head_img = logo.crop((int(w*.19), int(h*.05), int(w*.81), int(h*.49)))
-    side = int(max(head_img.size) * 1.08); sq = Image.new("RGB", (side, side), (0, 0, 0)); sq.paste(head_img, ((sq.size[0]-head_img.size[0])//2, (sq.size[1]-head_img.size[1])//2))
+    side = int(max(head_img.size) * 1.28); sq = Image.new("RGB", (side, side), (0, 0, 0)); sq.paste(head_img, ((sq.size[0]-head_img.size[0])//2, (sq.size[1]-head_img.size[1])//2))
     sq.resize((256, 256)).save(S.out / "assets/logo-icon.png", optimize=True); sq.resize((64, 64)).save(S.out / "favicon.png")
     from PIL import ImageEnhance
     bg = Image.open(ROOT / "shared/hero.webp").convert("RGB").resize((1200, 675)).crop((0, 22, 1200, 652)); bg = ImageEnhance.Brightness(bg).enhance(.5).convert("RGBA")
