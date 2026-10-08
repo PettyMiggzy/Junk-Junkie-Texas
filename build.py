@@ -67,7 +67,9 @@ def crumbs(S, items): return {"@context": "https://schema.org", "@type": "Breadc
 # ------------------------------------------------------------ layout
 def head(S, title, desc, path, schema="", extra=""):
     u = S.base + path
-    return f'''<!DOCTYPE html><html lang="en-US"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
+    gid = S.c.get("gtag_id", "")
+    gtag = (f'<!-- Google tag (gtag.js) --><script async src="https://www.googletagmanager.com/gtag/js?id={gid}"></script><script>window.dataLayer = window.dataLayer || [];function gtag(){{dataLayer.push(arguments);}}gtag(\'js\', new Date());gtag(\'config\', \'{gid}\');</script>') if gid and "noindex" not in extra else ""
+    return f'''<!DOCTYPE html><html lang="en-US"><head>{gtag}<meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>{title}</title><meta name="description" content="{desc}"><link rel="canonical" href="{u}">
 <meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1"><meta name="theme-color" content="#0B0D10"><meta name="geo.region" content="US-TX"><meta name="geo.placename" content="{S.hub['name']}">
 <meta property="og:type" content="website"><meta property="og:site_name" content="{S.c['name']}"><meta property="og:locale" content="en_US"><meta property="og:title" content="{title}"><meta property="og:description" content="{desc}"><meta property="og:url" content="{u}">
