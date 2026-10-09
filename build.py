@@ -114,6 +114,7 @@ def quote_form(S, place, anchor="quote-more"):
 <select required name="service" aria-label="Service" class="{inp} sm:col-span-2"><option value="">Choose service</option>{opts}</select>
 <input required name="phone" type="tel" aria-label="Phone" placeholder="Phone number" class="{inp}"><input required name="email" type="email" aria-label="Email" placeholder="Email" class="{inp}">
 <input required name="address" aria-label="Address" placeholder="Address" class="{inp} sm:col-span-2"><input required name="city" aria-label="City" placeholder="City" class="{inp}"><input required name="zip" aria-label="Zip" placeholder="Zip code" class="{inp}">
+<label class="block text-sm text-bone/70 sm:col-span-2">📷 Add photos for the fastest firm price <span class="text-bone/40">(optional)</span><input type="file" name="photos" accept="image/*" multiple class="mt-1 block w-full text-sm"></label>
 <textarea name="message" rows="3" aria-label="Message" placeholder="Message (optional)" class="{inp} sm:col-span-2"></textarea>
 <button type="submit" data-btn class="sm:col-span-2 rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition">Get My Fast Quote</button><p data-msg class="sm:col-span-2 text-sm text-center text-bone/60" role="status"></p></form></div></section>'''
 
@@ -129,6 +130,7 @@ def top_form(S, place, anchor=True):
 <input required name="name" autocomplete="name" aria-label="Your name" placeholder="Your name" class="{inp}">
 <input required name="phone" type="tel" inputmode="tel" autocomplete="tel" aria-label="Phone number" placeholder="Phone number" class="{inp}">
 <div class="grid grid-cols-5 gap-3"><input required name="zip" inputmode="numeric" autocomplete="postal-code" aria-label="Zip code" placeholder="Zip" class="{inp} col-span-2"><select name="service" aria-label="What do you need" class="{inp} col-span-3"><option value="">Service needed</option>{opts}</select></div>
+<label class="block text-sm text-bone/70">📷 Add photos for the fastest firm price <span class="text-bone/40">(optional)</span><input type="file" name="photos" accept="image/*" multiple class="mt-1 block w-full text-sm"></label>
 <textarea name="message" rows="1" maxlength="600" aria-label="Notes" placeholder="Notes (optional)" class="{inp} resize-none"></textarea>
 <button type="submit" data-btn class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-3 sm:py-4 text-base transition glow">Get My Free Quote</button>
 <p data-msg class="text-sm text-center text-bone/60" role="status"></p></form>
