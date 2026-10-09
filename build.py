@@ -254,6 +254,11 @@ def crm_page(S):
     body = f"""<main class="pt-28 pb-24"><div class="max-w-7xl mx-auto px-5"><div class="flex flex-wrap items-end justify-between gap-3 mb-6"><div><h1 class="display text-4xl font-extrabold mb-1">Customer CRM</h1><p class="text-bone/60">Every quote request from all six sites, worked as a pipeline. Needs the admin PIN.</p></div><a href="/admin/" class="text-sm text-ember underline">Back to dashboard</a></div><div id="crmApp"></div></div></main>"""
     S.write(path, head(S, "CRM", "Owner CRM", path, "", '<meta name="robots" content="noindex, nofollow">').replace('<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">', "") + header(S) + body + footer(S).replace("/assets/form.js", "/assets/crm.js"))
 
+def portal_page(S):
+    path = "/q/"
+    body = """<main class="pt-28 pb-24"><div class="max-w-2xl mx-auto px-5"><div id="portalApp"><p class="text-bone/60">Loading...</p></div></div></main>"""
+    S.write(path, head(S, "Your quote or invoice", "Your quote or invoice", path, "", '<meta name="robots" content="noindex, nofollow">').replace('<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">', "") + header(S) + body + footer(S).replace("/assets/form.js", "/assets/portal.js"))
+
 def home(S):
     c = S.c; hub = S.hub["name"]; names = [x["name"] for x in S.cities]
     others = ", ".join(names[1:-1]) + (" and " + names[-1] if len(names) > 1 else "")
@@ -337,7 +342,7 @@ def build_site(S):
     # assets
     shutil.copy(ROOT / "shared" / "hero.webp", S.out / "assets/hero.webp")
     for rg in ("rig1.webp", "rig2.webp"): shutil.copy(ROOT / "shared" / "rig" / rg, S.out / "assets" / rg)
-    for f in ["form.js", "app.js", "crew.js", "admin.js", "crm.js"]: shutil.copy(ROOT / "shared" / f, S.out / "assets" / f)
+    for f in ["form.js", "app.js", "crew.js", "admin.js", "crm.js", "portal.js"]: shutil.copy(ROOT / "shared" / f, S.out / "assets" / f)
     shutil.copytree(ROOT / "shared" / "api", S.out / "api"); shutil.copy(S.out / "api" / "package.json", S.out / "package.json"); (S.out / "api" / "package.json").unlink()
     (S.out / "api" / "_site.js").write_text(f'export default {json.dumps(S.slug)};\n')
     (S.out / "api" / "_routes.js").write_text(ROUTES_JS)
@@ -367,7 +372,7 @@ def build_site(S):
     hub_page(S, "/areas/", f"Junk Removal Service Areas | {hub} & Nearby, TX | {c['name']}", f"We serve {', '.join(x['name'] for x in S.cities)}, Texas. Call {c['phone_display']}.", "Junk Removal Service Areas", f"Serving {', '.join(x['name'] for x in S.cities)}, Texas.", cc, "Service Areas", map_section(S), MAP_CSS)
     sc = "".join(f'<a href="{S.svc_path(s)}" class="rounded-2xl bg-slate2 border border-line p-6 hover:border-ember/60 transition"><div class="display text-ember font-extrabold mb-2">{s["icon"]}</div><h2 class="display font-bold text-xl mb-1">{s["name"]}</h2><p class="text-sm text-bone/60">{s["blurb"]}</p></a>' for s in SERVICES)
     hub_page(S, "/services/", f"Junk Removal Services {hub}, TX | {c['name']}", f"Junk removal, debris removal, cleanouts, appliance removal and more in {hub}, TX. Call {c['phone_display']}.", "Our Services", "From a single couch to a whole-property cleanout.", sc, "Services")
-    work_page(S); crew_page(S); admin_page(S); crm_page(S)
+    work_page(S); crew_page(S); admin_page(S); crm_page(S); portal_page(S)
     # site files
     urls = [("/", "1.0"), ("/areas/", "0.8"), ("/services/", "0.8"), ("/our-work/", "0.6")] + [(S.svc_path(s), "0.8") for s in SERVICES] + [(S.city_path(x), "0.9" if x is S.hub else "0.7") for x in S.cities]
     (S.out / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"<url><loc>{S.base}{u}</loc><lastmod>{TODAY}</lastmod><changefreq>weekly</changefreq><priority>{p}</priority></url>\n" for u, p in urls) + "</urlset>\n")
