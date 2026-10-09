@@ -1,4 +1,26 @@
 {
+  "redirects": [
+    {
+      "source": "/crm",
+      "destination": "https://www.junkjunkiesindiana.com/admin/crm/",
+      "permanent": false
+    },
+    {
+      "source": "/crm/",
+      "destination": "https://www.junkjunkiesindiana.com/admin/crm/",
+      "permanent": false
+    },
+    {
+      "source": "/CRM",
+      "destination": "https://www.junkjunkiesindiana.com/admin/crm/",
+      "permanent": false
+    },
+    {
+      "source": "/CRM/",
+      "destination": "https://www.junkjunkiesindiana.com/admin/crm/",
+      "permanent": false
+    }
+  ],
   "cleanUrls": true,
   "trailingSlash": true,
   "functions": {
