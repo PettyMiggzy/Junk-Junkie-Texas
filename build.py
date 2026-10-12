@@ -29,6 +29,21 @@ def jload(p, default):
     try: return json.loads(Path(p).read_text())
     except Exception: return default
 
+def cross_site_redirects(S):
+    """Pages for a city that now lives on another site (old Google Ads / Google listings / bookmarks) go to that site, same path.
+    Without this, an ad that still points at junkjunkiestexas.com/tomball-junk-removal/ lands on a 404."""
+    own = {str(p.relative_to(S.out)) for p in S.out.rglob("*")} if S.out.exists() else set()
+    out = []
+    for slug, cfg in SITES.items():
+        if slug == S.slug: continue
+        for city in cfg["cities"]:
+            if any(city in n for n in own): continue          # never hijack a page this site really has
+            for short in ("/" + city, "/" + city + "/"):      # bare "/tomball" -> that city's page
+                out.append({"source": short, "destination": "https://" + cfg["domain"] + "/" + city + "-junk-removal/", "permanent": True})
+            out.append({"source": "/:path(.*" + city + ".*)", "destination": "https://" + cfg["domain"] + "/:path", "permanent": True})
+    return out
+
+
 class Site:
     def __init__(self, cfg):
         self.c = cfg; self.slug = cfg["slug"]; self.base = "https://" + cfg["domain"]
@@ -379,7 +394,7 @@ def build_site(S):
     (S.out / "robots.txt").write_text(f"User-agent: *\nAllow: /\nDisallow: /crew/\nDisallow: /api/\nDisallow: /admin/\n\nSitemap: {S.base}/sitemap.xml\n")
     (S.out / "site.webmanifest").write_text(json.dumps({"name": c["name"], "short_name": "Junk Junkies", "start_url": "/", "display": "standalone", "background_color": "#0B0D10", "theme_color": "#14F500", "icons": [{"src": "/assets/logo-icon.png?v=2", "sizes": "256x256", "type": "image/png"}]}))
     (S.out / "llms.txt").write_text(f"# {c['name']}\n\n> Junk removal, debris removal, cleanouts, appliance removal and more in {', '.join(x['name'] for x in S.cities)}, Texas. Phone/text: {c['phone_display']}.\n\n## Services\n" + "".join(f"- [{s['name']}]({S.base}{S.svc_path(s)}): {s['blurb']}\n" for s in SERVICES) + "\n## Areas\n" + "".join(f"- [{x['name']}, TX]({S.base}{S.city_path(x)})\n" for x in S.cities))
-    (S.out / "vercel.json").write_text(json.dumps({"redirects": [{"source": x, "destination": "/crm/", "permanent": False} for x in ["/CRM", "/CRM/"]], "cleanUrls": True, "trailingSlash": True, "functions": {"api/*.js": {"maxDuration": 20}}, "crons": [{"path": "/api/gbp-sync", "schedule": "0 13 * * *"}], "headers": [{"source": "/assets/(.*)", "headers": [{"key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800"}]}, {"source": "/(.*)", "headers": [{"key": "X-Content-Type-Options", "value": "nosniff"}, {"key": "Referrer-Policy", "value": "strict-origin-when-cross-origin"}, {"key": "X-Frame-Options", "value": "SAMEORIGIN"}]}]}, indent=2))
+    (S.out / "vercel.json").write_text(json.dumps({"redirects": [{"source": x, "destination": "/crm/", "permanent": False} for x in ["/CRM", "/CRM/"]] + cross_site_redirects(S), "cleanUrls": True, "trailingSlash": True, "functions": {"api/*.js": {"maxDuration": 20}}, "crons": [{"path": "/api/gbp-sync", "schedule": "0 13 * * *"}], "headers": [{"source": "/assets/(.*)", "headers": [{"key": "Cache-Control", "value": "public, max-age=86400, stale-while-revalidate=604800"}]}, {"source": "/(.*)", "headers": [{"key": "X-Content-Type-Options", "value": "nosniff"}, {"key": "Referrer-Policy", "value": "strict-origin-when-cross-origin"}, {"key": "X-Frame-Options", "value": "SAMEORIGIN"}]}]}, indent=2))
     (S.out / "404.html").write_text(head(S, f"Page not found | {c['name']}", "Page not found.", "/404", "", '<meta name="robots" content="noindex">').replace('<meta name="robots" content="index, follow, max-image-preview:large, max-snippet:-1">', "") + header(S) + f'<main class="min-h-[70vh] grid place-items-center text-center px-5 pt-24"><div><h1 class="display text-5xl font-extrabold mb-4">Page not found.</h1><p class="text-bone/60 mb-6">But we can still haul your junk.</p><a href="/" class="rounded-full bg-ember text-ink font-bold px-8 py-4">Back to home</a></div></main>' + footer(S))
     print(f"{S.slug}: {len(urls)} pages -> dist/{S.slug}")
 

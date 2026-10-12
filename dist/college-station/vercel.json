@@ -9,6 +9,186 @@
       "source": "/CRM/",
       "destination": "/crm/",
       "permanent": false
+    },
+    {
+      "source": "/cypress",
+      "destination": "https://junkjunkiescypress.com/cypress-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/cypress/",
+      "destination": "https://junkjunkiescypress.com/cypress-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/:path(.*cypress.*)",
+      "destination": "https://junkjunkiescypress.com/:path",
+      "permanent": true
+    },
+    {
+      "source": "/jersey-village",
+      "destination": "https://junkjunkiescypress.com/jersey-village-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/jersey-village/",
+      "destination": "https://junkjunkiescypress.com/jersey-village-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/:path(.*jersey-village.*)",
+      "destination": "https://junkjunkiescypress.com/:path",
+      "permanent": true
+    },
+    {
+      "source": "/hockley",
+      "destination": "https://junkjunkiescypress.com/hockley-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/hockley/",
+      "destination": "https://junkjunkiescypress.com/hockley-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/:path(.*hockley.*)",
+      "destination": "https://junkjunkiescypress.com/:path",
+      "permanent": true
+    },
+    {
+      "source": "/katy",
+      "destination": "https://junkjunkiescypress.com/katy-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/katy/",
+      "destination": "https://junkjunkiescypress.com/katy-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/:path(.*katy.*)",
+      "destination": "https://junkjunkiescypress.com/:path",
+      "permanent": true
+    },
+    {
+      "source": "/spring",
+      "destination": "https://junkjunkiestexas.com/spring-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/spring/",
+      "destination": "https://junkjunkiestexas.com/spring-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/:path(.*spring.*)",
+      "destination": "https://junkjunkiestexas.com/:path",
+      "permanent": true
+    },
+    {
+      "source": "/klein",
+      "destination": "https://junkjunkiestexas.com/klein-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/klein/",
+      "destination": "https://junkjunkiestexas.com/klein-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/:path(.*klein.*)",
+      "destination": "https://junkjunkiestexas.com/:path",
+      "permanent": true
+    },
+    {
+      "source": "/the-woodlands",
+      "destination": "https://junkjunkiestexas.com/the-woodlands-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/the-woodlands/",
+      "destination": "https://junkjunkiestexas.com/the-woodlands-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/:path(.*the-woodlands.*)",
+      "destination": "https://junkjunkiestexas.com/:path",
+      "permanent": true
+    },
+    {
+      "source": "/humble",
+      "destination": "https://junkjunkiestexas.com/humble-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/humble/",
+      "destination": "https://junkjunkiestexas.com/humble-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/:path(.*humble.*)",
+      "destination": "https://junkjunkiestexas.com/:path",
+      "permanent": true
+    },
+    {
+      "source": "/tomball",
+      "destination": "https://junkjunkiestomball.com/tomball-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/tomball/",
+      "destination": "https://junkjunkiestomball.com/tomball-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/:path(.*tomball.*)",
+      "destination": "https://junkjunkiestomball.com/:path",
+      "permanent": true
+    },
+    {
+      "source": "/magnolia",
+      "destination": "https://junkjunkiestomball.com/magnolia-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/magnolia/",
+      "destination": "https://junkjunkiestomball.com/magnolia-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/:path(.*magnolia.*)",
+      "destination": "https://junkjunkiestomball.com/:path",
+      "permanent": true
+    },
+    {
+      "source": "/pinehurst",
+      "destination": "https://junkjunkiestomball.com/pinehurst-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/pinehurst/",
+      "destination": "https://junkjunkiestomball.com/pinehurst-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/:path(.*pinehurst.*)",
+      "destination": "https://junkjunkiestomball.com/:path",
+      "permanent": true
+    },
+    {
+      "source": "/montgomery",
+      "destination": "https://junkjunkiestomball.com/montgomery-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/montgomery/",
+      "destination": "https://junkjunkiestomball.com/montgomery-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/:path(.*montgomery.*)",
+      "destination": "https://junkjunkiestomball.com/:path",
+      "permanent": true
     }
   ],
   "cleanUrls": true,
