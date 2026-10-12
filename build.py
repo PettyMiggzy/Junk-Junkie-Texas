@@ -139,7 +139,7 @@ def top_form(S, place, anchor=True):
     return f"""<div {'id="quote" ' if anchor else ''}class="rounded-3xl bg-slate2/90 backdrop-blur border border-line p-4 sm:p-6 shadow-2xl scroll-mt-24">
 <div class="display text-lg sm:text-2xl font-extrabold leading-tight">Get your free quote in minutes</div>
 <p class="hidden sm:block text-sm text-bone/60 mt-1 mb-2">Tell us what you need. We'll text you a price.</p>
-<div class="disc mt-2 mb-3 sm:mb-4" role="note" aria-label="10 percent discount for veterans, seniors and first responders"><div class="disc-badge" aria-hidden="true"><span>10%</span></div><div class="disc-txt"><b>10% OFF</b><span>Veterans, seniors &amp; first responders</span></div><svg class="disc-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.3 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/></svg></div>
+<div class="disc mt-2 mb-3 sm:mb-4" role="note" aria-label="10 percent discount for veterans, seniors and first responders"><img src="/assets/discount-badge.webp" width="56" height="56" alt="" aria-hidden="true" loading="lazy" style="flex:none;width:56px;height:56px;margin:-4px 0"><div class="disc-txt"><b>10% OFF</b><span>Veterans, seniors &amp; first responders</span></div><svg class="disc-ico" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 2l2.9 6.3 6.9.8-5.1 4.7 1.4 6.8L12 17.3 5.9 20.6l1.4-6.8L2.2 9.1l6.9-.8z"/></svg></div>
 <form data-quote class="grid gap-3" aria-label="Quick quote request" data-key="{c['web3forms_key']}" data-email="{c['email']}" data-site="{c['name']}">
 <input type="hidden" name="access_key" value="{c['web3forms_key']}"><input type="hidden" name="subject" value="Quote request: {c['name']} ({place})"><input type="hidden" name="from_name" value="{c['name']} website"><input type="checkbox" name="botcheck" style="display:none">
 <input required name="name" autocomplete="name" aria-label="Your name" placeholder="Your name" class="{inp}">
@@ -199,6 +199,7 @@ def pricing_section(S):
 <div class="flex justify-between text-xs text-bone/50 mt-2"><span>¼ load</span><span>½ load</span><span>¾ load</span><span>Full</span></div>
 <div class="mt-7 flex flex-wrap items-baseline gap-3"><span class="text-bone/60 text-sm">Estimated</span><span id="loadPrice" class="display text-5xl font-extrabold text-ember">$475</span><span id="loadLabel" class="text-bone/60 text-sm"></span></div>
 <p class="text-xs text-bone/40 mt-4">Ballpark only. Heavy materials (concrete, dirt, shingles) are priced separately. 10% off for seniors, veterans and first responders.</p>
+<img src="/assets/discount-badge.webp" width="112" height="112" alt="10% off Veteran and Senior discount, Junk Junkies Texas" loading="lazy" style="width:112px;height:112px;max-width:30vw;max-height:30vw;margin-top:14px">
 <div class="mt-7 flex flex-wrap gap-3"><a href="#quote" class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition">Get an exact quote</a><a href="sms:{c['phone_tel']}" class="rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-8 py-4 transition">Text pictures</a></div></div>
 <div class="flex justify-center"><div class="relative w-full max-w-md aspect-[4/3] rounded-3xl border border-line bg-ink overflow-hidden"><div class="absolute bottom-0 inset-x-0 bg-ember/20 border-t border-ember truck-fill" id="truckFill" style="height:50%"></div>
 <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-8"><div class="display text-7xl font-extrabold" id="truckPct">50%</div><div class="text-bone/60 text-sm mt-2">of our 16-ft trailer</div></div><div class="absolute top-4 left-4 text-xs tracking-widest uppercase text-bone/40">Load estimator</div></div></div></div></section>"""
@@ -372,6 +373,7 @@ def build_site(S):
     side = int(max(head_img.size) * 1.28); sq = Image.new("RGB", (side, side), (0, 0, 0)); sq.paste(head_img, ((sq.size[0]-head_img.size[0])//2, (sq.size[1]-head_img.size[1])//2))
     sq.resize((256, 256)).save(S.out / "assets/logo-icon.png", optimize=True); sq.resize((64, 64)).save(S.out / "favicon.png"); sq.resize((192, 192), Image.LANCZOS).save(S.out / "favicon-192.png", optimize=True); sq.resize((256, 256), Image.LANCZOS).save(S.out / "favicon.ico", sizes=[(16, 16), (32, 32), (48, 48)])
     logo.resize((336, 336), Image.LANCZOS).save(S.out / "assets/logo-badge.png", optimize=True)  # the full location logo, city name and phone included, for the header
+    shutil.copy(ROOT / "assets/discount-badge.webp", S.out / "assets/discount-badge.webp")
     from PIL import ImageEnhance
     bg = Image.open(ROOT / "shared/hero.webp").convert("RGB").resize((1200, 675)).crop((0, 22, 1200, 652)); bg = ImageEnhance.Brightness(bg).enhance(.5).convert("RGBA")
     lg = logo.convert("RGBA").resize((520, 520)); bg.alpha_composite(lg, (340, 55)); bg.convert("RGB").save(S.out / "assets/og-image.jpg", quality=85, optimize=True)
