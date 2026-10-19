@@ -151,13 +151,21 @@ def top_form(S, place, anchor=True):
 <p data-msg class="text-sm text-center text-bone/60" role="status"></p></form>
 <div class="text-center text-sm text-bone/60">or call / text <a class="text-ember font-semibold" href="tel:{c['phone_tel']}">{c['phone_display']}</a> with photos</div></div>"""
 
+def svc_img(s, S, cls="", eager=False):
+    return f'<img src="/assets/svc/{s["slug"]}.webp" alt="{s["name"]} in {S.hub["name"]}, TX" width="800" height="450" loading="{"eager" if eager else "lazy"}" class="w-full h-full object-cover {cls}">'
+
+def svc_card(S, s, h="h3"):
+    return (f'<a href="{S.svc_path(s)}" class="rounded-3xl bg-slate2 border border-line overflow-hidden hover:border-ember/60 transition block">'
+            f'<div class="relative" style="aspect-ratio:16/9">{svc_img(s, S)}<span class="absolute top-3 left-3 display text-ember font-extrabold text-lg bg-ink/80 rounded-lg px-2 py-0.5">{s["icon"]}</span></div>'
+            f'<div class="p-5"><{h} class="display font-bold text-xl mb-1">{s["name"]}</{h}><p class="text-sm text-bone/60">{s["blurb"]}</p></div></a>')
+
 def faq_html(faq): return '<div class="divide-y divide-line">' + "".join(f'<details class="py-5 group"><summary class="display font-bold text-lg cursor-pointer list-none flex justify-between gap-4">{q}<span class="text-ember group-open:rotate-45 transition">+</span></summary><p class="text-bone/60 mt-3">{a}</p></details>' for q, a in faq) + "</div>"
 def crumb_html(parts):
     out = [f'<a href="{u}" class="hover:text-ember">{n}</a>' if i < len(parts)-1 else f'<span class="text-bone/80">{n}</span>' for i, (n, u) in enumerate(parts)]
     return '<nav aria-label="Breadcrumb" class="text-xs text-bone/50 mb-6 flex flex-wrap gap-2">' + ' <span>/</span> '.join(out) + "</nav>"
-def hero_small(S, h1, sub, crumbs_html, place=None):
+def hero_small(S, h1, sub, crumbs_html, place=None, image="/assets/hero.webp"):
     c = S.c; place = place or (S.hub["name"] + ", TX")
-    return f"""<section class="relative pt-24 pb-10 md:pt-32 md:pb-16 overflow-hidden"><img src="/assets/hero.webp" width="1280" height="720" alt="" class="absolute inset-0 w-full h-full object-cover opacity-30"><div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/85 to-ink/40"></div>
+    return f"""<section class="relative pt-24 pb-10 md:pt-32 md:pb-16 overflow-hidden"><img src="{image}" width="1280" height="720" alt="" class="absolute inset-0 w-full h-full object-cover opacity-30"><div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/85 to-ink/40"></div>
 <div class="relative max-w-6xl mx-auto px-5 grid lg:grid-cols-12 gap-8 items-start"><div class="lg:col-span-7">{crumbs_html}<h1 class="display text-3xl sm:text-5xl lg:text-6xl font-extrabold leading-[1.03] mb-4">{h1}</h1><p class="hidden sm:block text-base md:text-xl text-bone/75 max-w-2xl mb-6">{sub}</p>
 <div class="hidden sm:flex flex-col sm:flex-row gap-3"><a href="tel:{c['phone_tel']}" class="inline-flex justify-center rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-8 py-4 transition">Call {c['phone_display']}</a></div></div>
 <div class="lg:col-span-5">{top_form(S, place)}</div></div></section>"""
@@ -286,7 +294,7 @@ def home(S):
     title = f"Junk Removal {hub}, TX | Debris, Hoarder & Appliance Removal | {c['name']}"
     desc = f"Junk removal in {hub}, TX and {others}. Debris removal, cleanouts, appliance and furniture removal. Veteran and first responder discount. Call {c['phone_display']}."
     schema = ld(business_schema(S), {"@context": "https://schema.org", "@type": "WebSite", "name": c["name"], "url": S.base + "/", "publisher": {"@id": S.biz_id}}, faq_schema(faq))
-    svc = "".join(f'<a href="{S.svc_path(s)}" class="rounded-2xl bg-slate2 border border-line p-6 hover:border-ember/60 transition"><div class="display text-ember font-extrabold mb-2">{s["icon"]}</div><h3 class="display font-bold text-lg mb-1">{s["name"]}</h3><p class="text-sm text-bone/60">{s["blurb"]}</p></a>' for s in SERVICES)
+    svc = "".join(svc_card(S, s) for s in SERVICES)
     areas = "".join(f'<a href="{S.city_path(x)}" class="rounded-2xl border border-line bg-ink p-5 hover:border-ember/60 transition"><div class="font-semibold">{x["name"]}</div><div class="text-xs text-bone/50 mt-1">{x["county"]} County</div></a>' for x in S.cities)
     body = f'''<main><section class="relative flex items-center pt-20 pb-10 md:pt-28 md:pb-20 overflow-hidden"><img src="/assets/hero.webp" width="1280" height="720" alt="" class="absolute inset-0 w-full h-full object-cover opacity-55" fetchpriority="high">{reel_html(S)}<div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/10"></div>
 <div class="relative max-w-7xl mx-auto px-5 w-full grid lg:grid-cols-12 gap-8 lg:gap-10 items-center"><div class="lg:col-span-7">
@@ -319,7 +327,7 @@ def city_page(S, key):
            ("What can't you take?", "Hazardous materials such as paint, chemicals, asbestos and fuel.")]
     schema = ld(business_schema(S), {"@context": "https://schema.org", "@type": "Service", "name": f"Junk Removal in {n}, TX", "serviceType": "Junk removal", "provider": {"@id": S.biz_id}, "areaServed": {"@type": "City", "name": f"{n}, TX", "geo": {"@type": "GeoCoordinates", "latitude": x["lat"], "longitude": x["lon"]}}, "url": S.base + path}, crumbs(S, [("Home", "/"), ("Service Areas", "/areas/"), (n, path)]), faq_schema(faq))
     pills = "".join(f'<li class="rounded-full border border-line bg-slate2 px-4 py-2 text-sm">{a}</li>' for a in x["areas"])
-    cards = "".join(f'<a href="{S.svc_path(s)}" class="rounded-2xl bg-slate2 border border-line p-6 hover:border-ember/60 transition"><div class="display text-ember font-extrabold mb-2">{s["icon"]}</div><h3 class="display font-bold text-lg mb-1">{s["name"]}</h3><p class="text-sm text-bone/60">{s["blurb"]}</p></a>' for s in SERVICES[:6])
+    cards = "".join(svc_card(S, s) for s in SERVICES[:6])
     nl = "".join(f'<a href="{S.city_path(y)}" class="rounded-2xl border border-line bg-ink p-4 hover:border-ember/60 transition"><div class="font-semibold">{y["name"]}</div><div class="text-xs text-bone/50">{y["county"]} County</div></a>' for y in near)
     body = f'''<main>{hero_small(S, f"Junk Removal in {n}, Texas", f"Furniture, appliances, debris and cleanouts hauled away in {n} and across {x['county']} County.", crumb_html([("Home","/"),("Service Areas","/areas/"),(n,path)]))}
 <section class="py-16"><div class="max-w-5xl mx-auto px-5 prose-j"><h2>{n}'s junk removal crew</h2><p>{x['housing']}</p><p>In {n} we most often handle {x['jobs']}. {x['note']}</p>
@@ -338,8 +346,8 @@ def service_page(S, s):
     items = "".join(f'<li class="flex gap-3"><span class="text-ember">✓</span><span>{i}</span></li>' for i in s["items"])
     cities = "".join(f'<a href="{S.city_path(x)}" class="rounded-2xl border border-line bg-ink p-4 hover:border-ember/60 transition"><div class="font-semibold">{x["name"]}</div></a>' for x in S.cities)
     others = "".join(f'<a href="{S.svc_path(o)}" class="rounded-2xl border border-line bg-ink p-4 hover:border-ember/60 transition"><div class="font-semibold">{o["name"]}</div></a>' for o in SERVICES if o is not s)
-    body = f'''<main>{hero_small(S, f"{s['name']} in {hub['name']}, TX", s['blurb'], crumb_html([("Home","/"),("Services","/services/"),(s['name'],path)]))}
-<section class="py-16"><div class="max-w-5xl mx-auto px-5 prose-j"><h2>{s['name']} in {hub['name']}</h2><p>{s['intro']}</p><p>{hub['housing']} {s['name']} jobs here often come alongside {hub['jobs']}.</p>
+    body = f'''<main>{hero_small(S, f"{s['name']} in {hub['name']}, TX", s['blurb'], crumb_html([("Home","/"),("Services","/services/"),(s['name'],path)]), image=f"/assets/svc/{s['slug']}.webp")}
+<section class="py-16"><div class="max-w-5xl mx-auto px-5 prose-j"><div class="rounded-3xl overflow-hidden border border-line mb-8 not-prose" style="aspect-ratio:16/9">{svc_img(s, S, eager=True)}</div><h2>{s['name']} in {hub['name']}</h2><p>{s['intro']}</p><p>{hub['housing']} {s['name']} jobs here often come alongside {hub['jobs']}.</p>
 <h2>What this covers</h2><ul class="grid sm:grid-cols-2 gap-3 text-bone/80 mb-6 not-prose">{items}</ul>
 <h2>How it works</h2><p><strong>1. Send photos or details.</strong> <strong>2. Get a firm price.</strong> <strong>3. We take care of it.</strong> Veteran and first responder discount available.</p></div></section>
 {quote_form(S, hub['name'] + ", TX")}<section class="py-16"><div class="max-w-4xl mx-auto px-5"><h2 class="display text-3xl font-extrabold mb-8">{s['name']} FAQ</h2>{faq_html(s['faq'])}</div></section>
@@ -374,6 +382,7 @@ def build_site(S):
     sq.resize((256, 256)).save(S.out / "assets/logo-icon.png", optimize=True); sq.resize((64, 64)).save(S.out / "favicon.png"); sq.resize((192, 192), Image.LANCZOS).save(S.out / "favicon-192.png", optimize=True); sq.resize((256, 256), Image.LANCZOS).save(S.out / "favicon.ico", sizes=[(16, 16), (32, 32), (48, 48)])
     logo.resize((336, 336), Image.LANCZOS).save(S.out / "assets/logo-badge.png", optimize=True)  # the full location logo, city name and phone included, for the header
     shutil.copy(ROOT / "assets/discount-badge.webp", S.out / "assets/discount-badge.webp")
+    shutil.copytree(ROOT / "shared" / "svc", S.out / "assets/svc")
     from PIL import ImageEnhance
     bg = Image.open(ROOT / "shared/hero.webp").convert("RGB").resize((1200, 675)).crop((0, 22, 1200, 652)); bg = ImageEnhance.Brightness(bg).enhance(.5).convert("RGBA")
     lg = logo.convert("RGBA").resize((520, 520)); bg.alpha_composite(lg, (340, 55)); bg.convert("RGB").save(S.out / "assets/og-image.jpg", quality=85, optimize=True)
@@ -387,7 +396,7 @@ def build_site(S):
     for s in SERVICES: service_page(S, s)
     cc = "".join(f'<a href="{S.city_path(x)}" class="rounded-2xl bg-slate2 border border-line p-6 hover:border-ember/60 transition"><h2 class="display font-bold text-xl mb-1">Junk Removal in {x["name"]}</h2><p class="text-sm text-bone/60">{x["county"]} County · {x["zips"]}</p></a>' for x in S.cities)
     hub_page(S, "/areas/", f"Junk Removal Service Areas | {hub} & Nearby, TX | {c['name']}", f"We serve {', '.join(x['name'] for x in S.cities)}, Texas. Call {c['phone_display']}.", "Junk Removal Service Areas", f"Serving {', '.join(x['name'] for x in S.cities)}, Texas.", cc, "Service Areas", map_section(S), MAP_CSS)
-    sc = "".join(f'<a href="{S.svc_path(s)}" class="rounded-2xl bg-slate2 border border-line p-6 hover:border-ember/60 transition"><div class="display text-ember font-extrabold mb-2">{s["icon"]}</div><h2 class="display font-bold text-xl mb-1">{s["name"]}</h2><p class="text-sm text-bone/60">{s["blurb"]}</p></a>' for s in SERVICES)
+    sc = "".join(svc_card(S, s, "h2") for s in SERVICES)
     hub_page(S, "/services/", f"Junk Removal Services {hub}, TX | {c['name']}", f"Junk removal, debris removal, cleanouts, appliance removal and more in {hub}, TX. Call {c['phone_display']}.", "Our Services", "From a single couch to a whole-property cleanout.", sc, "Services")
     work_page(S); crew_page(S); admin_page(S); crm_page(S); portal_page(S)
     # site files
