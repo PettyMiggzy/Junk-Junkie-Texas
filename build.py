@@ -159,6 +159,10 @@ def svc_card(S, s, h="h3"):
             f'<div class="relative" style="aspect-ratio:16/9">{svc_img(s, S)}<span class="absolute top-3 left-3 display text-ember font-extrabold text-lg bg-ink/80 rounded-lg px-2 py-0.5">{s["icon"]}</span></div>'
             f'<div class="p-5"><{h} class="display font-bold text-xl mb-1">{s["name"]}</{h}><p class="text-sm text-bone/60">{s["blurb"]}</p></div></a>')
 
+def svc_tile(S, s):
+    return (f'<a href="{S.svc_path(s)}" class="rounded-2xl border border-line bg-ink overflow-hidden hover:border-ember/60 transition block">'
+            f'<div style="aspect-ratio:16/9">{svc_img(s, S)}</div><div class="p-3 font-semibold text-sm">{s["name"]}</div></a>')
+
 def faq_html(faq): return '<div class="divide-y divide-line">' + "".join(f'<details class="py-5 group"><summary class="display font-bold text-lg cursor-pointer list-none flex justify-between gap-4">{q}<span class="text-ember group-open:rotate-45 transition">+</span></summary><p class="text-bone/60 mt-3">{a}</p></details>' for q, a in faq) + "</div>"
 def crumb_html(parts):
     out = [f'<a href="{u}" class="hover:text-ember">{n}</a>' if i < len(parts)-1 else f'<span class="text-bone/80">{n}</span>' for i, (n, u) in enumerate(parts)]
@@ -345,7 +349,7 @@ def service_page(S, s):
     schema = ld(business_schema(S), {"@context": "https://schema.org", "@type": "Service", "name": f"{s['name']} in {hub['name']}, TX", "serviceType": s["name"], "provider": {"@id": S.biz_id}, "areaServed": [{"@type": "City", "name": x["name"] + ", TX"} for x in S.cities], "url": S.base + path}, crumbs(S, [("Home", "/"), ("Services", "/services/"), (s["name"], path)]), faq_schema(s["faq"]))
     items = "".join(f'<li class="flex gap-3"><span class="text-ember">✓</span><span>{i}</span></li>' for i in s["items"])
     cities = "".join(f'<a href="{S.city_path(x)}" class="rounded-2xl border border-line bg-ink p-4 hover:border-ember/60 transition"><div class="font-semibold">{x["name"]}</div></a>' for x in S.cities)
-    others = "".join(f'<a href="{S.svc_path(o)}" class="rounded-2xl border border-line bg-ink p-4 hover:border-ember/60 transition"><div class="font-semibold">{o["name"]}</div></a>' for o in SERVICES if o is not s)
+    others = "".join(svc_tile(S, o) for o in SERVICES if o is not s)
     body = f'''<main>{hero_small(S, f"{s['name']} in {hub['name']}, TX", s['blurb'], crumb_html([("Home","/"),("Services","/services/"),(s['name'],path)]), image=f"/assets/svc/{s['slug']}.webp")}
 <section class="py-16"><div class="max-w-5xl mx-auto px-5 prose-j"><div class="rounded-3xl overflow-hidden border border-line mb-8 not-prose" style="aspect-ratio:16/9">{svc_img(s, S, eager=True)}</div><h2>{s['name']} in {hub['name']}</h2><p>{s['intro']}</p><p>{hub['housing']} {s['name']} jobs here often come alongside {hub['jobs']}.</p>
 <h2>What this covers</h2><ul class="grid sm:grid-cols-2 gap-3 text-bone/80 mb-6 not-prose">{items}</ul>
