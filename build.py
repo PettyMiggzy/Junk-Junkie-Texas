@@ -225,7 +225,7 @@ def find_us(S):
     if not S.is_hq: return ""
     c = S.c; q = f"{c['street']}, {c['street_city']}, TX {c['zip']}".replace(" ", "+")
     return f"""<section id="visit" class="py-16 bg-slate2 border-y border-line"><div class="max-w-6xl mx-auto px-5 grid lg:grid-cols-2 gap-10 items-center"><div><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">Find us</p><h2 class="display text-3xl md:text-4xl font-extrabold leading-tight mb-4">Based in Spring, TX.</h2>
-<address class="not-italic text-lg text-bone/80 mb-4">{c['street']}<br>{c['street_city']}, TX {c['zip']}</address><p class="text-bone/60 mb-6">Call or text first to schedule a pickup. We come to you across the Spring, Klein, The Woodlands and Humble area.</p>
+<p class="text-bone/60 mb-6">Call or text first to schedule a pickup. We come to you across the Spring, Klein, The Woodlands and Humble area.</p>
 <div class="flex flex-wrap gap-3"><a href="tel:{c['phone_tel']}" class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-6 py-3 transition">Call {c['phone_display']}</a><a rel="noopener" target="_blank" href="https://www.google.com/maps/dir/?api=1&destination={q}" class="rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-6 py-3 transition">Get directions</a></div></div>
 <iframe src="https://www.google.com/maps?q={q}&output=embed" title="Map showing {c['name']} location in Spring, TX" loading="lazy" referrerpolicy="no-referrer-when-downgrade" class="w-full h-80 lg:h-96 rounded-3xl border border-line" style="filter:invert(.92) hue-rotate(180deg) saturate(.8)"></iframe></div></section>"""
 
