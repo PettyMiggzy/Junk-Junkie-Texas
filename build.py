@@ -96,9 +96,10 @@ def head(S, title, desc, path, schema="", extra=""):
 
 def header(S):
     c = S.c
+    moving_nav = f'<a href="{MOVING_PATH}" class="hover:text-bone">Moving</a>' if S.is_hq else ""
     return f'''<header class="fixed top-0 inset-x-0 z-50 backdrop-blur-md bg-ink/80 border-b border-line"><div class="max-w-7xl mx-auto px-5 h-16 flex items-center justify-between">
 <a href="/" class="flex items-center gap-2.5"><img src="/assets/logo-badge.png" width="56" height="56" alt="{c['name']} logo" class="h-14 w-14 rounded-xl logo-pulse"><span class="display block max-w-[11rem] sm:max-w-none text-[11px] sm:text-base font-extrabold leading-[1.15]">{S.c.get('header_name', S.c['name'])}</span></a>
-<nav class="hidden md:flex items-center gap-8 text-sm text-bone/70" aria-label="Main"><a href="/services/" class="hover:text-bone">Services</a><a href="/areas/" class="hover:text-bone">Service Areas</a><a href="/our-work/" class="hover:text-bone">Our Work</a><a href="/#faq" class="hover:text-bone">FAQ</a></nav>
+<nav class="hidden md:flex items-center gap-8 text-sm text-bone/70" aria-label="Main"><a href="/services/" class="hover:text-bone">Services</a><a href="/areas/" class="hover:text-bone">Service Areas</a><a href="/our-work/" class="hover:text-bone">Our Work</a>{moving_nav}<a href="/#faq" class="hover:text-bone">FAQ</a></nav>
 <div class="flex items-center gap-3"><a href="tel:{c['phone_tel']}" class="hidden sm:inline-flex text-sm font-semibold text-bone/90 hover:text-ember">{c['phone_display']}</a><a href="#quote" class="inline-flex whitespace-nowrap rounded-full bg-ember hover:bg-emberDark text-ink font-bold text-sm px-4 sm:px-5 py-2.5 transition">Free Quote</a></div></div></header>'''
 
 def footer(S):
@@ -118,7 +119,7 @@ def footer(S):
 
 def quote_form(S, place, anchor="quote-more"):
     c = S.c; inp = 'bg-ink border border-line rounded-xl px-4 py-3 w-full focus:outline-none focus:border-ember'
-    opts = "".join(f"<option>{o}</option>" for o in HOME_SERVICES)
+    opts = "".join(f"<option>{o}</option>" for o in HOME_SERVICES + (["Moving Services"] if S.is_hq else []))
     return f'''<section id="{anchor}" class="py-20 bg-slate2 border-y border-line"><div class="max-w-5xl mx-auto px-5 grid lg:grid-cols-2 gap-10">
 <div><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">Free quote</p><h2 class="display text-3xl md:text-4xl font-extrabold leading-tight mb-4">Get a fast quote for {place}.</h2>
 <p class="text-bone/60 mb-4">Tell us what you need hauled and we will text you a price. Or call <a class="text-ember font-semibold" href="tel:{c['phone_tel']}">{c['phone_display']}</a>, or text photos to the same number.</p>
@@ -135,7 +136,7 @@ def quote_form(S, place, anchor="quote-more"):
 
 def top_form(S, place, anchor=True):
     c = S.c; inp = 'bg-ink border border-line rounded-xl px-4 py-2 sm:py-3 w-full text-base focus:outline-none focus:border-ember'
-    opts = "".join(f"<option>{o}</option>" for o in HOME_SERVICES)
+    opts = "".join(f"<option>{o}</option>" for o in HOME_SERVICES + (["Moving Services"] if S.is_hq else []))
     return f"""<div {'id="quote" ' if anchor else ''}class="rounded-3xl bg-slate2/90 backdrop-blur border border-line p-4 sm:p-6 shadow-2xl scroll-mt-24">
 <div class="display text-lg sm:text-2xl font-extrabold leading-tight">Get your free quote in minutes</div>
 <p class="hidden sm:block text-sm text-bone/60 mt-1 mb-2">Tell us what you need. We'll text you a price.</p>
@@ -215,6 +216,104 @@ def pricing_section(S):
 <div class="mt-7 flex flex-wrap gap-3"><a href="#quote" class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition">Get an exact quote</a><a href="sms:{c['phone_tel']}" class="rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-8 py-4 transition">Text pictures</a></div></div>
 <div class="flex justify-center"><div class="relative w-full max-w-md aspect-[4/3] rounded-3xl border border-line bg-ink overflow-hidden"><div class="absolute bottom-0 inset-x-0 bg-ember/20 border-t border-ember truck-fill" id="truckFill" style="height:50%"></div>
 <div class="absolute inset-0 flex flex-col items-center justify-center text-center p-8"><div class="display text-7xl font-extrabold" id="truckPct">50%</div><div class="text-bone/60 text-sm mt-2">of our 16-ft trailer</div></div><div class="absolute top-4 left-4 text-xs tracking-widest uppercase text-bone/40">Load estimator</div></div></div></div></section>"""
+
+# ------------------------------------------------------------------ moving (Spring only)
+MOVING_PATH = "/moving-services-spring-tx/"
+MOVING = [
+    ("local-moving", "Local Moving", "Movers in Spring, Klein, The Woodlands and Humble who show up, load carefully and unload where you want it."),
+    ("residential-moving", "Residential Moving", "Whole-house moves for families: furniture wrapped, boxes loaded and everything set in the right rooms."),
+    ("apartment-moving", "Apartment Moving", "Stairs, tight hallways and parking lots are routine. Apartment movers for one-bedrooms up to full units."),
+    ("long-distance-moving", "Long-Distance Moving", "Moving farther than the next town? Call or text for a quote. We load, secure and unload."),
+    ("furniture-moving", "Furniture Moving", "Couches, beds, dressers, tables and chairs moved room to room, house to house or to storage."),
+    ("storage-unit-moving", "Storage Unit Moving", "We move your belongings into a storage unit, out of one, or from one unit to another."),
+    ("loading-unloading", "Loading & Unloading", "Already have a truck or trailer? Our crew loads it fast or unloads it at the other end."),
+    ("office-moving", "Office Moving", "Desks, chairs, boxes and standard office furniture moved for small offices and home offices."),
+    ("packing-protection", "Packing & Furniture Protection", "Furniture wrapped in moving blankets and stretch wrap so it arrives the way it left."),
+]
+MOVING_TIERS = [(2, "$150", "$450"), (3, "$175", "$525"), (4, "$200", "$600")]
+MOVING_NOTE = "Junk Junkies Texas provides basic household and furniture moving only. We do not move pianos, heavy safes or other extremely heavy specialty items."
+
+def moving_img(k, alt, eager=False, cls=""):
+    return f'<img src="/assets/moving/{k}.webp" alt="{alt}" width="800" height="450" loading="{"eager" if eager else "lazy"}" class="w-full h-full object-cover {cls}">'
+
+def mover_icons(n):
+    one = '<svg viewBox="0 0 24 24" width="26" height="26" fill="currentColor" aria-hidden="true"><circle cx="12" cy="6.5" r="3.5"/><path d="M5 21v-4.5C5 13.5 8 12 12 12s7 1.5 7 4.5V21z"/></svg>'
+    return f'<div class="flex justify-center gap-1 text-ember mb-3" role="img" aria-label="{n} movers">{one * n}</div>'
+
+def moving_cards(S):
+    out = ""
+    for k, name, blurb in MOVING:
+        out += (f'<article class="rounded-3xl bg-slate2 border border-line overflow-hidden hover:border-ember/60 transition flex flex-col">'
+                f'<div class="relative" style="aspect-ratio:16/9">{moving_img(k, f"{name} by Junk Junkies Texas movers in Spring, TX")}</div>'
+                f'<div class="p-5 flex flex-col flex-1"><h3 class="display font-bold text-xl mb-1">{name}</h3><p class="text-sm text-bone/60 mb-4 flex-1">{blurb}</p>'
+                f'<a href="#quote" class="text-ember font-semibold text-sm">Get a moving quote &rarr;</a></div></article>')
+    return out
+
+def moving_price_cards(S):
+    cards = ""
+    for n, rate, mn in MOVING_TIERS:
+        cards += (f'<div class="rounded-3xl bg-ink border border-line hover:border-ember/60 transition p-7 text-center">{mover_icons(n)}'
+                  f'<div class="display text-xl font-extrabold mb-1">{n} Movers</div>'
+                  f'<div class="display text-6xl font-extrabold text-ember leading-none">{rate}<span class="text-xl text-bone/60 font-semibold">/hour</span></div>'
+                  f'<div class="mt-4 inline-block rounded-full border border-ember/50 text-ember text-xs font-semibold tracking-wide uppercase px-4 py-1.5">3-hour minimum: {mn}</div></div>')
+    return cards
+
+def moving_price_block(S):
+    c = S.c
+    return f"""<div class="grid md:grid-cols-3 gap-4">{moving_price_cards(S)}</div>
+<div class="mt-4 rounded-3xl bg-ink border border-line p-6 flex flex-wrap items-center justify-between gap-3"><div><div class="display text-xl font-extrabold">Stairs</div><p class="text-sm text-bone/60">Add-on for apartments and multi-story homes.</p></div><div class="display text-4xl font-extrabold text-ember">$75<span class="text-base text-bone/60 font-semibold"> per flight / set of stairs</span></div></div>
+<ul class="mt-6 grid sm:grid-cols-2 gap-x-8 gap-y-2 text-bone/75 text-sm"><li class="flex gap-3"><span class="text-ember">✓</span><span>All moving jobs have a <strong>3-hour minimum</strong>.</span></li><li class="flex gap-3"><span class="text-ember">✓</span><span>Moving blankets and basic plastic/stretch wrap are <strong>included</strong>.</span></li><li class="flex gap-3"><span class="text-bone/50">+</span><span>Additional boxes, mattress bags, specialty packing materials, excessive packing supplies and other materials may cost extra.</span></li><li class="flex gap-3"><span class="text-bone/50">+</span><span>Send a few details or photos for an exact quote: <a class="text-ember font-semibold" href="sms:{c['phone_tel']}">text {c['phone_display']}</a>.</span></li></ul>"""
+
+def moving_note_box():
+    return '<div class="rounded-2xl border border-ember/40 bg-ink p-5 text-sm md:text-base text-bone/80"><strong class="text-ember">Basic household and furniture moving only.</strong> We move standard household items: couches, beds, dressers, tables, chairs, boxes and typical apartment and home belongings. We do not move pianos, heavy safes or other extremely heavy specialty items.</div>'
+
+def moving_areas_chips():
+    return "".join(f'<li class="rounded-full border border-line bg-slate2 px-4 py-2 text-sm">{a}</li>' for a in ["Spring, TX 77373", "Klein, TX 77379", "The Woodlands, TX", "Humble, TX"])
+
+def moving_teaser(S):
+    if not S.is_hq: return ""
+    mini = "".join(f'<div class="rounded-2xl bg-ink border border-line p-5 text-center">{mover_icons(n)}<div class="display text-lg font-extrabold">{n} Movers</div><div class="display text-4xl font-extrabold text-ember">{r}<span class="text-sm text-bone/60 font-semibold">/hr</span></div><div class="text-xs text-bone/50 mt-1">3-hour minimum: {m}</div></div>' for n, r, m in MOVING_TIERS)
+    return f"""<section id="moving" class="py-20 border-y border-line"><div class="max-w-7xl mx-auto px-5 grid lg:grid-cols-2 gap-12 items-center"><div>
+<p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">Junk removal + moving</p>
+<h2 class="display text-4xl md:text-5xl font-extrabold leading-tight mb-5">Movers in Spring, TX, from the same crew.</h2>
+<p class="text-bone/60 text-lg mb-6">Junk Junkies Texas hauls junk and moves households. If you are moving, we can load your furniture and boxes, run them across town, and haul away whatever you are not taking. Local movers serving Spring, Klein, The Woodlands and Humble.</p>
+<div class="grid grid-cols-3 gap-3 mb-6">{mini}</div>
+<p class="text-xs text-bone/50 mb-6">All moving jobs have a 3-hour minimum. Moving blankets and basic stretch wrap included. Stairs $75 per flight. {MOVING_NOTE}</p>
+<div class="flex flex-wrap gap-3"><a href="{MOVING_PATH}" class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition">See moving services &amp; pricing</a><a href="#quote" class="rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-8 py-4 transition">Get a Moving Quote</a></div></div>
+<div class="rounded-3xl overflow-hidden border border-line" style="aspect-ratio:4/3"><img src="/assets/moving/our-trailer.webp" alt="Junk Junkies Texas moving trailer and truck parked on a Spring, TX street" width="1280" height="960" loading="lazy" class="w-full h-full object-cover"></div></div></section>"""
+
+def moving_page(S):
+    c = S.c; path = MOVING_PATH
+    title = "Moving Company in Spring, TX | Local Movers | Junk Junkies Texas"
+    desc = f"Local movers in Spring, TX: residential, apartment, furniture and office moving for Spring, Klein, The Woodlands and Humble. 2, 3 or 4 movers from $150/hour, 3-hour minimum. Call or text {c['phone_display']}."
+    faq = [("What do you move?", "Standard household and furniture moves: couches, beds, dressers, tables, chairs, boxes and typical apartment and home belongings. We also load and unload your own truck or trailer."),
+           ("What can't you move?", "Junk Junkies Texas provides basic household and furniture moving only. We do not move pianos, heavy safes or other extremely heavy specialty items."),
+           ("How does moving pricing work?", "Moving is billed by the hour based on crew size: 2 movers $150/hour, 3 movers $175/hour or 4 movers $200/hour. Every moving job has a 3-hour minimum ($450, $525 or $600). Stairs are $75 per flight or set of stairs."),
+           ("What is included?", "Moving blankets and basic plastic/stretch wrap are included. Additional boxes, mattress bags, specialty packing materials and excessive packing supplies may cost extra."),
+           ("Where do you provide moving services?", "Our Spring location moves households throughout Spring, TX 77373, Klein, TX 77379, The Woodlands, TX and Humble, TX."),
+           ("Do you also haul junk?", "Yes. Junk removal is what we started with. If you are moving and have furniture or a garage full of things you are not taking, we can haul it away on the same visit.")]
+    schema = ld(business_schema(S), {"@context": "https://schema.org", "@type": "Service", "name": "Moving Services in Spring, TX", "serviceType": "Moving company", "provider": {"@id": S.biz_id},
+        "areaServed": [{"@type": "City", "name": n} for n in ["Spring, TX", "Klein, TX", "The Woodlands, TX", "Humble, TX"]], "url": S.base + path},
+        crumbs(S, [("Home", "/"), ("Moving", path)]), faq_schema(faq))
+    h1 = "Moving Company in Spring, TX"
+    sub = "Local movers for homes, apartments, storage units and small offices in Spring, Klein, The Woodlands and Humble. Junk removal and moving from one crew."
+    body = f"""<main>{hero_small(S, h1, sub, crumb_html([("Home","/"),("Moving",path)]), image="/assets/moving/local-moving.webp")}
+<section class="py-16"><div class="max-w-6xl mx-auto px-5 grid lg:grid-cols-2 gap-10 items-center"><div class="prose-j"><h2>Junk removal and professional moving, from the Spring location</h2>
+<p>Junk Junkies Texas started with junk removal. From our Spring location we now also run a moving crew: careful, hard-working movers for local and residential moves across Spring, Klein, The Woodlands and Humble. Need a couch out of the house, a one-bedroom apartment moved, or a storage unit emptied into a new place? We load, wrap, haul and unload, and we can take away anything you are not keeping.</p>
+<p>Whether you are searching for local movers in Spring TX or apartment movers who will handle the stairs, the process is the same: tell us what you are moving, get a clear hourly rate, and pick a date.</p></div>
+<div class="rounded-3xl overflow-hidden border border-line" style="aspect-ratio:4/3"><img src="/assets/moving/our-trailer.webp" alt="Junk Junkies Texas enclosed trailer and truck ready for a move in Spring, TX" width="1280" height="960" loading="eager" class="w-full h-full object-cover"></div></div>
+<div class="max-w-6xl mx-auto px-5 mt-8">{moving_note_box()}</div></section>
+<section id="moving-services" class="py-16 bg-slate2 border-y border-line"><div class="max-w-7xl mx-auto px-5"><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">Moving services</p><h2 class="display text-4xl md:text-5xl font-extrabold leading-tight mb-4">Everything for a smooth move.</h2><p class="text-bone/60 text-lg max-w-3xl mb-10">Residential moving, apartment moving, furniture moving, storage unit moving and more, all basic household and furniture moves done right.</p>
+<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">{moving_cards(S)}</div></div></section>
+<section id="moving-pricing" class="py-20"><div class="max-w-5xl mx-auto px-5"><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">Moving price scale</p><h2 class="display text-4xl md:text-5xl font-extrabold leading-tight mb-4">Simple hourly moving rates.</h2><p class="text-bone/60 text-lg mb-10">Pick the crew size that fits your move. Every moving job has a 3-hour minimum.</p>
+{moving_price_block(S)}
+<div class="mt-8 flex flex-wrap gap-3"><a href="#quote" class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition">Get a Moving Quote</a><a href="tel:{c['phone_tel']}" class="rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-8 py-4 transition">Call or Text {c['phone_display']}</a></div></div></section>
+<section class="py-16 bg-slate2 border-y border-line"><div class="max-w-5xl mx-auto px-5"><h2 class="display text-3xl font-extrabold mb-3">Moving services in Spring, Klein, The Woodlands and Humble</h2><p class="text-bone/60 mb-6">Our Spring location provides moving services throughout:</p><ul class="flex flex-wrap gap-2 mb-8 not-prose">{moving_areas_chips()}</ul>
+<p class="text-bone/70 mb-6">Local movers in Spring TX, movers in Klein TX, moving services in The Woodlands and moving services in Humble TX: if you are nearby, call or text and we will confirm your date.</p>{moving_note_box()}
+<div class="mt-8 flex flex-wrap gap-3"><a href="#quote" class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition">Schedule Your Move</a><a href="/services/" class="rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-8 py-4 transition">Junk removal services</a></div></div></section>
+{quote_form(S, "Spring, TX")}
+<section class="py-16"><div class="max-w-4xl mx-auto px-5"><h2 class="display text-3xl font-extrabold mb-8">Moving questions</h2>{faq_html(faq)}</div></section></main>"""
+    S.write(path, head(S, title, desc, path, schema, '<link rel="preload" as="image" href="/assets/moving/local-moving.webp" fetchpriority="high">') + header(S) + body + footer(S))
 
 def reel_html(S):
     if not S.reel: return ""
@@ -311,6 +410,7 @@ def home(S):
 <div class="lg:col-span-5">{top_form(S, hub + ", TX")}</div></section>
 <section id="services" class="py-24"><div class="max-w-7xl mx-auto px-5"><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">What we do</p><h2 class="display text-4xl md:text-5xl font-extrabold leading-tight mb-6 max-w-3xl">If it needs to go, we haul it.</h2><p class="text-bone/60 text-lg max-w-2xl mb-12">{S.hub["housing"]}</p><div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">{svc}</div></div></section>
 {pricing_section(S)}
+{moving_teaser(S)}
 {home_jobs(S)}
 {reviews_section(S)}
 {map_section(S)}
@@ -387,6 +487,7 @@ def build_site(S):
     logo.resize((336, 336), Image.LANCZOS).save(S.out / "assets/logo-badge.png", optimize=True)  # the full location logo, city name and phone included, for the header
     shutil.copy(ROOT / "assets/discount-badge.webp", S.out / "assets/discount-badge.webp")
     shutil.copytree(ROOT / "shared" / "svc", S.out / "assets/svc")
+    if S.is_hq: shutil.copytree(ROOT / "shared" / "moving", S.out / "assets/moving")
     from PIL import ImageEnhance
     bg = Image.open(ROOT / "shared/hero.webp").convert("RGB").resize((1200, 675)).crop((0, 22, 1200, 652)); bg = ImageEnhance.Brightness(bg).enhance(.5).convert("RGBA")
     lg = logo.convert("RGBA").resize((520, 520)); bg.alpha_composite(lg, (340, 55)); bg.convert("RGB").save(S.out / "assets/og-image.jpg", quality=85, optimize=True)
@@ -396,6 +497,7 @@ def build_site(S):
     if src_jobs.exists(): shutil.copytree(src_jobs, S.out / "assets/jobs")
     # pages
     home(S)
+    if S.is_hq: moving_page(S)
     for k in c["cities"]: city_page(S, k)
     for s in SERVICES: service_page(S, s)
     cc = "".join(f'<a href="{S.city_path(x)}" class="rounded-2xl bg-slate2 border border-line p-6 hover:border-ember/60 transition"><h2 class="display font-bold text-xl mb-1">Junk Removal in {x["name"]}</h2><p class="text-sm text-bone/60">{x["county"]} County · {x["zips"]}</p></a>' for x in S.cities)
@@ -404,7 +506,7 @@ def build_site(S):
     hub_page(S, "/services/", f"Junk Removal Services {hub}, TX | {c['name']}", f"Junk removal, debris removal, cleanouts, appliance removal and more in {hub}, TX. Call {c['phone_display']}.", "Our Services", "From a single couch to a whole-property cleanout.", sc, "Services")
     work_page(S); crew_page(S); admin_page(S); crm_page(S); portal_page(S)
     # site files
-    urls = [("/", "1.0"), ("/areas/", "0.8"), ("/services/", "0.8"), ("/our-work/", "0.6")] + [(S.svc_path(s), "0.8") for s in SERVICES] + [(S.city_path(x), "0.9" if x is S.hub else "0.7") for x in S.cities]
+    urls = [("/", "1.0"), ("/areas/", "0.8"), ("/services/", "0.8"), ("/our-work/", "0.6")] + ([(MOVING_PATH, "0.9")] if S.is_hq else []) + [(S.svc_path(s), "0.8") for s in SERVICES] + [(S.city_path(x), "0.9" if x is S.hub else "0.7") for x in S.cities]
     (S.out / "sitemap.xml").write_text('<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + "".join(f"<url><loc>{S.base}{u}</loc><lastmod>{TODAY}</lastmod><changefreq>weekly</changefreq><priority>{p}</priority></url>\n" for u, p in urls) + "</urlset>\n")
     (S.out / "robots.txt").write_text(f"User-agent: *\nAllow: /\nDisallow: /crew/\nDisallow: /api/\nDisallow: /admin/\n\nSitemap: {S.base}/sitemap.xml\n")
     (S.out / "site.webmanifest").write_text(json.dumps({"name": c["name"], "short_name": "Junk Junkies", "start_url": "/", "display": "standalone", "background_color": "#0B0D10", "theme_color": "#14F500", "icons": [{"src": "/assets/logo-icon.png?v=2", "sizes": "256x256", "type": "image/png"}]}))
