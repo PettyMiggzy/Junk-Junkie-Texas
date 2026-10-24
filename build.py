@@ -156,8 +156,9 @@ def svc_img(s, S, cls="", eager=False):
     return f'<img src="/assets/svc/{s["slug"]}.webp" alt="{s["name"]} in {S.hub["name"]}, TX" width="800" height="450" loading="{"eager" if eager else "lazy"}" class="w-full h-full object-cover {cls}">'
 
 def svc_card(S, s, h="h3"):
+    badge = "" if S.is_hq else '<span class="absolute top-3 left-3 display text-ember font-extrabold text-lg bg-ink/80 rounded-lg px-2 py-0.5">' + s["icon"] + '</span>'
     return (f'<a href="{S.svc_path(s)}" class="rounded-3xl bg-slate2 border border-line overflow-hidden hover:border-ember/60 transition block">'
-            f'<div class="relative" style="aspect-ratio:16/9">{svc_img(s, S)}<span class="absolute top-3 left-3 display text-ember font-extrabold text-lg bg-ink/80 rounded-lg px-2 py-0.5">{s["icon"]}</span></div>'
+            f'<div class="relative" style="aspect-ratio:16/9">{svc_img(s, S)}{badge}</div>'
             f'<div class="p-5"><{h} class="display font-bold text-xl mb-1">{s["name"]}</{h}><p class="text-sm text-bone/60">{s["blurb"]}</p></div></a>')
 
 def svc_tile(S, s):
@@ -262,7 +263,7 @@ def moving_price_block(S):
     c = S.c
     return f"""<div class="grid md:grid-cols-3 gap-4">{moving_price_cards(S)}</div>
 <div class="mt-4 rounded-3xl bg-ink border border-line p-6 flex flex-wrap items-center justify-between gap-3"><div><div class="display text-xl font-extrabold">Stairs</div><p class="text-sm text-bone/60">Add-on for apartments and multi-story homes.</p></div><div class="display text-4xl font-extrabold text-ember">$75<span class="text-base text-bone/60 font-semibold"> per flight / set of stairs</span></div></div>
-<ul class="mt-6 grid sm:grid-cols-2 gap-x-8 gap-y-2 text-bone/75 text-sm"><li class="flex gap-3"><span class="text-ember">✓</span><span>All moving jobs have a <strong>3-hour minimum</strong>.</span></li><li class="flex gap-3"><span class="text-ember">✓</span><span>Moving blankets and basic plastic/stretch wrap are <strong>included</strong>.</span></li><li class="flex gap-3"><span class="text-bone/50">+</span><span>Additional boxes, mattress bags, specialty packing materials, excessive packing supplies and other materials may cost extra.</span></li><li class="flex gap-3"><span class="text-bone/50">+</span><span>Send a few details or photos for an exact quote: <a class="text-ember font-semibold" href="sms:{c['phone_tel']}">text {c['phone_display']}</a>.</span></li></ul>"""
+<ul class="mt-6 grid sm:grid-cols-2 gap-x-8 gap-y-2 text-bone/75 text-sm"><li class="flex gap-3"><span class="text-ember">✓</span><span><strong>Moving truck included</strong> in every full-service rate.</span></li><li class="flex gap-3"><span class="text-ember">✓</span><span>All moving jobs have a <strong>3-hour minimum</strong>.</span></li><li class="flex gap-3"><span class="text-ember">✓</span><span>Moving blankets and basic plastic/stretch wrap are <strong>included</strong>.</span></li><li class="flex gap-3"><span class="text-bone/50">+</span><span>Additional boxes, mattress bags, specialty packing materials, excessive packing supplies and other materials may cost extra.</span></li><li class="flex gap-3"><span class="text-bone/50">+</span><span>Send a few details or photos for an exact quote: <a class="text-ember font-semibold" href="sms:{c['phone_tel']}">text {c['phone_display']}</a>.</span></li></ul>"""
 
 def moving_note_box():
     return '<div class="rounded-2xl border border-ember/40 bg-ink p-5 text-sm md:text-base text-bone/80"><strong class="text-ember">Basic household and furniture moving only.</strong> We move standard household items: couches, beds, dressers, tables, chairs, boxes and typical apartment and home belongings. We do not move pianos, heavy safes or other extremely heavy specialty items.</div>'
@@ -315,7 +316,7 @@ def labor_only_section(S):
 
 def full_service_section(S):
     c = S.c
-    return f"""<section id="moving-pricing" class="py-20"><div class="max-w-5xl mx-auto px-5"><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">Moving price scale</p><h2 class="display text-4xl md:text-5xl font-extrabold leading-tight mb-4">Full-Service Moving Rates</h2><p class="text-bone/60 text-lg mb-10">Pick the crew size that fits your move. Every moving job has a 3-hour minimum.</p>
+    return f"""<section id="moving-pricing" class="py-20"><div class="max-w-5xl mx-auto px-5"><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">Moving price scale</p><h2 class="display text-4xl md:text-5xl font-extrabold leading-tight mb-4">Full-Service Moving Rates</h2><p class="text-bone/60 text-lg mb-4">Pick the crew size that fits your move. Every moving job has a 3-hour minimum.</p><p class="mb-10 inline-block rounded-2xl border border-ember/50 bg-ink px-4 py-3 text-bone/90"><strong class="text-ember">The moving truck is included.</strong> Full-service rates cover the movers and our moving truck.</p>
 {moving_price_block(S)}
 <div class="mt-8 flex flex-wrap gap-3"><a href="#quote" class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition">Get a Moving Quote</a><a href="tel:{c['phone_tel']}" class="rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-8 py-4 transition">Call or Text {c['phone_display']}</a></div></div></section>"""
 
@@ -325,8 +326,8 @@ def moving_page(S):
     desc = f"Local movers in Spring, TX: residential, apartment, furniture and office moving for Spring, Klein, The Woodlands and Humble. 2, 3 or 4 movers from $150/hour, 3-hour minimum. Call or text {c['phone_display']}."
     faq = [("What do you move?", "Standard household and furniture moves: couches, beds, dressers, tables, chairs, boxes and typical apartment and home belongings. We also load and unload your own truck or trailer."),
            ("What can't you move?", "Junk Junkies Texas provides basic household and furniture moving only. We do not move pianos, heavy safes or other extremely heavy specialty items."),
-           ("How does moving pricing work?", "Moving is billed by the hour based on crew size: 2 movers $150/hour, 3 movers $175/hour or 4 movers $200/hour. Every moving job has a 3-hour minimum ($450, $525 or $600). Stairs are $75 per flight or set of stairs."),
-           ("What is included?", "Moving blankets and basic plastic/stretch wrap are included. Additional boxes, mattress bags, specialty packing materials and excessive packing supplies may cost extra."),
+           ("How does moving pricing work?", "Moving is billed by the hour based on crew size: 2 movers $150/hour, 3 movers $175/hour or 4 movers $200/hour. Every moving job has a 3-hour minimum ($450, $525 or $600). Full-service rates include the moving truck. Stairs are $75 per flight or set of stairs."),
+           ("What is included?", "Full-service rates include the movers, our moving truck, moving blankets and basic plastic/stretch wrap. Additional boxes, mattress bags, specialty packing materials and excessive packing supplies may cost extra."),
            ("Where do you provide moving services?", "Our Spring location moves households throughout Spring, TX 77373, Klein, TX 77379, The Woodlands, TX and Humble, TX."),
            ("Do you also haul junk?", "Yes. Junk removal is what we started with. If you are moving and have furniture or a garage full of things you are not taking, we can haul it away on the same visit.")]
     schema = ld(business_schema(S), {"@context": "https://schema.org", "@type": "Service", "name": "Moving Services in Spring, TX", "serviceType": "Moving company", "provider": {"@id": S.biz_id},
