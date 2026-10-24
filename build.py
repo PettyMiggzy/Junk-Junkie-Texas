@@ -278,6 +278,17 @@ def moving_block(S, tag="h3"):
             f'<p class="text-bone/60 mt-2">Local, residential, apartment, office and furniture moving. Basic household and furniture moves only. <a class="text-ember font-semibold" href="{MOVING_PATH}">See moving rates</a>.</p></div>'
             + moving_cards(S, MOVING_PATH + "#moving-pricing"))
 
+def moving_home(S):
+    """Spring homepage: the 9 moving services, then the moving rates right under them."""
+    if not S.is_hq: return ""
+    return f"""<section id="moving" class="py-20 border-y border-line"><div class="max-w-7xl mx-auto px-5"><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">Also from our Spring crew</p>
+<h2 class="display text-4xl md:text-5xl font-extrabold leading-tight mb-4">Moving Services in Spring, TX</h2>
+<p class="text-bone/60 text-lg max-w-3xl mb-10">Local movers for Spring, Klein, The Woodlands and Humble: residential, apartment, office and furniture moving, with junk removal from the same crew.</p>
+<div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">{moving_cards(S, MOVING_PATH + "#moving-pricing")}</div>
+<div class="mt-8">{moving_note_box()}</div></div></section>
+{full_service_section(S)}
+{labor_only_section(S)}"""
+
 def moving_teaser(S):
     if not S.is_hq: return ""
     mini = "".join(f'<div class="rounded-2xl bg-ink border border-line p-5 text-center">{mover_icons(n)}<div class="display text-lg font-extrabold">{n} Movers</div><div class="display text-4xl font-extrabold text-ember">{r}<span class="text-sm text-bone/60 font-semibold">/hr</span></div><div class="text-xs text-bone/50 mt-1">3-hour minimum: {m}</div></div>' for n, r, m in MOVING_TIERS)
@@ -300,6 +311,12 @@ def labor_only_section(S):
     return f"""<section id="labor-only-moving" class="py-20 border-t border-line"><div class="max-w-5xl mx-auto px-5"><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">You bring the truck</p><h2 class="display text-4xl md:text-5xl font-extrabold leading-tight mb-4">Labor-Only Moving Rates</h2><p class="text-bone/60 text-lg mb-10">Already have a truck or trailer? Our movers load and unload it. All labor-only moving jobs have a 3-hour minimum.</p>
 <div class="grid md:grid-cols-3 gap-4">{cards}</div>
 <div class="mt-6 rounded-3xl bg-slate2 border border-line p-6 md:p-8"><h3 class="display text-xl font-extrabold mb-4">Labor-Only Moving Includes:</h3><ul class="grid sm:grid-cols-2 gap-x-8 gap-y-2 text-bone/80 text-sm md:text-base">{inc}</ul><p class="mt-5 text-bone/70 text-sm md:text-base"><strong class="text-bone">All labor-only moving jobs have a 3-hour minimum.</strong></p></div>
+<div class="mt-8 flex flex-wrap gap-3"><a href="#quote" class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition">Get a Moving Quote</a><a href="tel:{c['phone_tel']}" class="rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-8 py-4 transition">Call or Text {c['phone_display']}</a></div></div></section>"""
+
+def full_service_section(S):
+    c = S.c
+    return f"""<section id="moving-pricing" class="py-20"><div class="max-w-5xl mx-auto px-5"><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">Moving price scale</p><h2 class="display text-4xl md:text-5xl font-extrabold leading-tight mb-4">Full-Service Moving Rates</h2><p class="text-bone/60 text-lg mb-10">Pick the crew size that fits your move. Every moving job has a 3-hour minimum.</p>
+{moving_price_block(S)}
 <div class="mt-8 flex flex-wrap gap-3"><a href="#quote" class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition">Get a Moving Quote</a><a href="tel:{c['phone_tel']}" class="rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-8 py-4 transition">Call or Text {c['phone_display']}</a></div></div></section>"""
 
 def moving_page(S):
@@ -325,9 +342,7 @@ def moving_page(S):
 <div class="max-w-6xl mx-auto px-5 mt-8">{moving_note_box()}</div></section>
 <section id="moving-services" class="py-16 bg-slate2 border-y border-line"><div class="max-w-7xl mx-auto px-5"><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">Moving services</p><h2 class="display text-4xl md:text-5xl font-extrabold leading-tight mb-4">Everything for a smooth move.</h2><p class="text-bone/60 text-lg max-w-3xl mb-10">Residential moving, apartment moving, furniture moving, storage unit moving and more, all basic household and furniture moves done right.</p>
 <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">{moving_cards(S)}</div></div></section>
-<section id="moving-pricing" class="py-20"><div class="max-w-5xl mx-auto px-5"><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">Moving price scale</p><h2 class="display text-4xl md:text-5xl font-extrabold leading-tight mb-4">Full-Service Moving Rates</h2><p class="text-bone/60 text-lg mb-10">Pick the crew size that fits your move. Every moving job has a 3-hour minimum.</p>
-{moving_price_block(S)}
-<div class="mt-8 flex flex-wrap gap-3"><a href="#quote" class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition">Get a Moving Quote</a><a href="tel:{c['phone_tel']}" class="rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-8 py-4 transition">Call or Text {c['phone_display']}</a></div></div></section>
+{full_service_section(S)}
 {labor_only_section(S)}
 <section class="py-16 bg-slate2 border-y border-line"><div class="max-w-5xl mx-auto px-5"><h2 class="display text-3xl font-extrabold mb-3">Moving services in Spring, Klein, The Woodlands and Humble</h2><p class="text-bone/60 mb-6">Our Spring location provides moving services throughout:</p><ul class="flex flex-wrap gap-2 mb-8 not-prose">{moving_areas_chips()}</ul>
 <p class="text-bone/70 mb-6">Local movers in Spring TX, movers in Klein TX, moving services in The Woodlands and moving services in Humble TX: if you are nearby, call or text and we will confirm your date.</p>{moving_note_box()}
@@ -416,22 +431,24 @@ def home(S):
            ("What do you haul?", "21 services in all: junk removal, cleanouts, furniture and appliances, and debris removal for construction, yard, storm, roofing, remodeling, demolition and brush.")]
     title = f"Junk Removal {hub}, TX | Debris, Hoarder & Appliance Removal | {c['name']}"
     if S.is_hq: title = f"Junk Removal & Moving {hub}, TX | Movers, Debris & Appliance Removal | {c['name']}"
+    rig_extra_cls = " rig3s" if S.is_hq else ""
+    rig3_html = '<img src="/assets/rig3.webp" width="1100" height="300" alt="Junk Junkies Texas enclosed trailer and truck" loading="lazy" class="rig3 absolute inset-0 w-full h-full object-contain bg-black">' if S.is_hq else ""
     desc = f"Junk removal in {hub}, TX and {others}. Debris removal, cleanouts, appliance and furniture removal. Veteran and first responder discount. Call {c['phone_display']}."
     schema = ld(business_schema(S), {"@context": "https://schema.org", "@type": "WebSite", "name": c["name"], "url": S.base + "/", "publisher": {"@id": S.biz_id}}, faq_schema(faq))
-    svc = "".join(svc_card(S, s) for s in SERVICES) + moving_block(S)
+    svc = "".join(svc_card(S, s) for s in SERVICES)
     areas = "".join(f'<a href="{S.city_path(x)}" class="rounded-2xl border border-line bg-ink p-5 hover:border-ember/60 transition"><div class="font-semibold">{x["name"]}</div><div class="text-xs text-bone/50 mt-1">{x["county"]} County</div></a>' for x in S.cities)
     body = f'''<main><section class="relative flex items-center pt-20 pb-10 md:pt-28 md:pb-20 overflow-hidden"><img src="/assets/hero.webp" width="1280" height="720" alt="" class="absolute inset-0 w-full h-full object-cover opacity-55" fetchpriority="high">{reel_html(S)}<div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/10"></div>
 <div class="relative max-w-7xl mx-auto px-5 w-full grid lg:grid-cols-12 gap-8 lg:gap-10 items-center"><div class="lg:col-span-7">
 <p class="inline-flex items-center gap-2 text-[11px] sm:text-xs font-semibold tracking-widest uppercase text-ember mb-3 sm:mb-6"><span class="w-2 h-2 rounded-full bg-ember animate-pulse"></span> Serving {", ".join(names)}</p>
 <div class="hidden sm:block mb-5"><div class="logo-shine"><img src="/assets/logo.png" width="120" height="120" alt="{c['name']} logo" class="w-28 h-28"></div></div>
 <h1 class="display text-[34px] sm:text-6xl lg:text-7xl font-extrabold leading-[0.98] mb-3 sm:mb-5">{"Junk Removal &amp; Moving" if S.is_hq else "Junk Removal in"} <span class="text-ember">{hub}, TX</span></h1>
-<div class="rig relative max-w-xl mb-3 sm:mb-6 rounded-xl overflow-hidden border border-line" style="aspect-ratio:1100/300"><img src="/assets/rig1.webp" width="1100" height="300" alt="{c['name']} truck and trailer" class="absolute inset-0 w-full h-full object-contain bg-black"><img src="/assets/rig2.webp" width="1100" height="300" alt="" loading="lazy" class="rig2 absolute inset-0 w-full h-full object-contain bg-black"></div>
+<div class="rig{rig_extra_cls} relative max-w-xl mb-3 sm:mb-6 rounded-xl overflow-hidden border border-line" style="aspect-ratio:1100/300"><img src="/assets/rig1.webp" width="1100" height="300" alt="{c['name']} truck and trailer" class="absolute inset-0 w-full h-full object-contain bg-black"><img src="/assets/rig2.webp" width="1100" height="300" alt="" loading="lazy" class="rig2 absolute inset-0 w-full h-full object-contain bg-black">{rig3_html}</div>
 <p class="hidden sm:block text-base md:text-xl text-bone/75 max-w-xl mb-6">Reliable junk removal, debris cleanup, cleanouts, appliance and furniture removal. {S.hub["note"]}</p>
 <div class="hidden sm:flex gap-3"><a href="tel:{c['phone_tel']}" class="inline-flex justify-center rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-8 py-4 transition">Call {c['phone_display']}</a></div></div>
 <div class="lg:col-span-5">{top_form(S, hub + ", TX")}</div></section>
 <section id="services" class="py-24"><div class="max-w-7xl mx-auto px-5"><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">What we do</p><h2 class="display text-4xl md:text-5xl font-extrabold leading-tight mb-6 max-w-3xl">If it needs to go, we haul it.</h2><p class="text-bone/60 text-lg max-w-2xl mb-12">{S.hub["housing"]}</p><div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">{svc}</div></div></section>
 {pricing_section(S)}
-{moving_teaser(S)}
+{moving_home(S)}
 {home_jobs(S)}
 {reviews_section(S)}
 {map_section(S)}
@@ -490,7 +507,7 @@ def build_site(S):
     (S.out / "assets").mkdir(parents=True)
     # assets
     shutil.copy(ROOT / "shared" / "hero.webp", S.out / "assets/hero.webp")
-    for rg in ("rig1.webp", "rig2.webp"): shutil.copy(ROOT / "shared" / "rig" / rg, S.out / "assets" / rg)
+    for rg in ("rig1.webp", "rig2.webp") + (("rig3.webp",) if S.is_hq else ()): shutil.copy(ROOT / "shared" / "rig" / rg, S.out / "assets" / rg)
     for f in ["form.js", "app.js", "crew.js", "admin.js", "crm.js", "portal.js"]: shutil.copy(ROOT / "shared" / f, S.out / "assets" / f)
     shutil.copytree(ROOT / "shared" / "api", S.out / "api"); shutil.copy(S.out / "api" / "package.json", S.out / "package.json"); (S.out / "api" / "package.json").unlink()
     (S.out / "api" / "_site.js").write_text(f'export default {json.dumps(S.slug)};\n')
