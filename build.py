@@ -107,6 +107,8 @@ def footer(S):
     c = S.c
     cities = "".join(f'<a href="{S.city_path(x)}" class="block text-bone/60 hover:text-ember py-0.5">{x["name"]}</a>' for x in S.cities)
     svcs = "".join(f'<a href="{S.svc_path(s)}" class="block text-bone/60 hover:text-ember py-0.5">{s["name"]}</a>' for s in SERVICES)
+    if S.is_hq:  # Spring also lists its moving services under the junk removal ones
+        svcs += "".join(f'<a href="{MOVING_PATH}" class="block text-bone/60 hover:text-ember py-0.5">{name}</a>' for _k, name, _b in MOVING)
     sis = "".join(f'<a rel="noopener" href="https://{o["domain"]}" class="block text-bone/60 hover:text-ember">{o["name"]}</a>' for k, o in SITES.items() if k != S.slug and not o.get("domain_is_placeholder"))
     addr = f'<address class="not-italic text-bone/60 mt-2">{c["street"]}<br>{c["street_city"]}, TX {c["zip"]}</address>' if S.is_hq else ""
     return f'''<footer class="border-t border-line py-16 pb-32 md:pb-16"><div class="max-w-7xl mx-auto px-5 grid md:grid-cols-4 gap-10 text-sm">
