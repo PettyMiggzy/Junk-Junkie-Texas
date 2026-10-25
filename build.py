@@ -2,7 +2,8 @@
 """Builds all Junk Junkies Texas sites from one template.
 Usage: python3 build.py [site-slug ...]   (default: all)  -> dist/<slug>/
 Then: bash build.sh  (also compiles CSS)."""
-import json, sys, shutil, datetime
+import json, sys, shutil, datetime, hashlib
+CSS_VER = hashlib.md5(open(__import__("pathlib").Path(__file__).resolve().parent / "shared" / "site.css", "rb").read()).hexdigest()[:8]  # new address whenever the stylesheet changes, so phones never keep an old copy
 from pathlib import Path
 from content import CITIES, SERVICES
 
@@ -92,7 +93,7 @@ def head(S, title, desc, path, schema="", extra=""):
 <meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{title}"><meta name="twitter:description" content="{desc}"><meta name="twitter:image" content="{S.og}">
 <link rel="icon" href="/favicon.ico?v=3" sizes="any"><link rel="icon" type="image/png" sizes="192x192" href="/favicon-192.png?v=3"><link rel="icon" type="image/png" href="/favicon.png?v=3"><link rel="apple-touch-icon" href="/assets/logo-icon.png?v=2"><link rel="manifest" href="/site.webmanifest">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600&display=swap"><link rel="stylesheet" href="/assets/site.css">{extra}{schema}</head><body class="antialiased">'''
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@600;700;800&family=Inter:wght@400;500;600&display=swap"><link rel="stylesheet" href="/assets/site.css?v={CSS_VER}">{extra}{schema}</head><body class="antialiased">'''
 
 def header(S):
     c = S.c
