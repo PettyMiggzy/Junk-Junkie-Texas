@@ -441,13 +441,24 @@ def home(S):
     schema = ld(business_schema(S), {"@context": "https://schema.org", "@type": "WebSite", "name": c["name"], "url": S.base + "/", "publisher": {"@id": S.biz_id}}, faq_schema(faq))
     svc = "".join(svc_card(S, s) for s in SERVICES)
     areas = "".join(f'<a href="{S.city_path(x)}" class="rounded-2xl border border-line bg-ink p-5 hover:border-ember/60 transition"><div class="font-semibold">{x["name"]}</div><div class="text-xs text-bone/50 mt-1">{x["county"]} County</div></a>' for x in S.cities)
+    if S.is_hq:  # Spring: one collage picture with the trailer details directly under it (Aaron's request)
+        hero_media = f'<div class="relative max-w-xl mb-3 sm:mb-5 rounded-xl overflow-hidden border border-line"><img src="/assets/spring-collage.webp" width="1448" height="1086" alt="{c["name"]} truck with the 16-foot open trailer and the 20-foot enclosed trailer" class="w-full h-auto" fetchpriority="high"></div>'
+        hero_text = (f'<div class="max-w-xl text-sm md:text-base text-bone/80 leading-relaxed space-y-3 mb-6">'
+                     f'<p>We have a 16-foot trailer with 5-foot walls available for junk removal, along with a 20-foot enclosed trailer with 8.5-foot walls for house moves, apartment moves, larger junk removal jobs, and other hauling needs.</p>'
+                     f'<p>We proudly serve Spring, Klein, Humble, and The Woodlands, Texas.</p>'
+                     f'<p>Junk removal is priced based on how much space your items take up in our trailers. Local and long-distance moving services are priced by the hour.</p>'
+                     f'<p>In-house estimates are available for the most accurate pricing on any of our services. You can also text pictures to <a class="text-ember font-semibold" href="sms:{c["phone_tel"]}">346-413-9644</a> for an estimate, although an in-person estimate is always the best way to provide exact pricing.</p>'
+                     f'<p>We also offer a 10% discount to seniors and veterans on our services.</p></div>')
+    else:
+        hero_media = f'''<div class="rig{rig_extra_cls} relative max-w-xl mb-3 sm:mb-6 rounded-xl overflow-hidden border border-line" style="aspect-ratio:1100/300"><img src="/assets/rig1.webp" width="1100" height="300" alt="{c['name']} truck and trailer" class="absolute inset-0 w-full h-full object-contain bg-black"><img src="/assets/rig2.webp" width="1100" height="300" alt="" loading="lazy" class="rig2 absolute inset-0 w-full h-full object-contain bg-black">{rig3_html}</div>'''
+        hero_text = f'''<p class="hidden sm:block text-base md:text-xl text-bone/75 max-w-xl mb-6">Reliable junk removal, debris cleanup, cleanouts, appliance and furniture removal. {S.hub["note"]}</p>'''
     body = f'''<main><section class="relative flex items-center pt-20 pb-10 md:pt-28 md:pb-20 overflow-hidden"><img src="/assets/hero.webp" width="1280" height="720" alt="" class="absolute inset-0 w-full h-full object-cover opacity-55" fetchpriority="high">{reel_html(S)}<div class="absolute inset-0 bg-gradient-to-t from-ink via-ink/70 to-ink/10"></div>
 <div class="relative max-w-7xl mx-auto px-5 w-full grid lg:grid-cols-12 gap-8 lg:gap-10 items-center"><div class="lg:col-span-7">
 <p class="inline-flex items-center gap-2 text-[11px] sm:text-xs font-semibold tracking-widest uppercase text-ember mb-3 sm:mb-6"><span class="w-2 h-2 rounded-full bg-ember animate-pulse"></span> Serving {", ".join(names)}</p>
 <div class="hidden sm:block mb-5"><div class="logo-shine"><img src="/assets/logo.png" width="120" height="120" alt="{c['name']} logo" class="w-28 h-28"></div></div>
 <h1 class="display text-[34px] sm:text-6xl lg:text-7xl font-extrabold leading-[0.98] mb-3 sm:mb-5">{"Junk Removal &amp; Moving" if S.is_hq else "Junk Removal in"} <span class="text-ember">{hub}, TX</span></h1>
-<div class="rig{rig_extra_cls} relative max-w-xl mb-3 sm:mb-6 rounded-xl overflow-hidden border border-line" style="aspect-ratio:1100/300"><img src="/assets/rig1.webp" width="1100" height="300" alt="{c['name']} truck and trailer" class="absolute inset-0 w-full h-full object-contain bg-black"><img src="/assets/rig2.webp" width="1100" height="300" alt="" loading="lazy" class="rig2 absolute inset-0 w-full h-full object-contain bg-black">{rig3_html}</div>
-<p class="hidden sm:block text-base md:text-xl text-bone/75 max-w-xl mb-6">Reliable junk removal, debris cleanup, cleanouts, appliance and furniture removal. {S.hub["note"]}</p>
+{hero_media}
+{hero_text}
 <div class="hidden sm:flex gap-3"><a href="tel:{c['phone_tel']}" class="inline-flex justify-center rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-8 py-4 transition">Call {c['phone_display']}</a></div></div>
 <div class="lg:col-span-5">{top_form(S, hub + ", TX")}</div></section>
 <section id="services" class="py-24"><div class="max-w-7xl mx-auto px-5"><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">What we do</p><h2 class="display text-4xl md:text-5xl font-extrabold leading-tight mb-6 max-w-3xl">If it needs to go, we haul it.</h2><p class="text-bone/60 text-lg max-w-2xl mb-12">{S.hub["housing"]}</p><div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">{svc}</div></div></section>
@@ -511,7 +522,7 @@ def build_site(S):
     (S.out / "assets").mkdir(parents=True)
     # assets
     shutil.copy(ROOT / "shared" / "hero.webp", S.out / "assets/hero.webp")
-    for rg in ("rig1.webp", "rig2.webp") + (("rig3.webp",) if S.is_hq else ()): shutil.copy(ROOT / "shared" / "rig" / rg, S.out / "assets" / rg)
+    for rg in ("rig1.webp", "rig2.webp") + (("rig3.webp", "spring-collage.webp") if S.is_hq else ()): shutil.copy(ROOT / "shared" / "rig" / rg, S.out / "assets" / rg)
     for f in ["form.js", "app.js", "crew.js", "admin.js", "crm.js", "portal.js"]: shutil.copy(ROOT / "shared" / f, S.out / "assets" / f)
     shutil.copytree(ROOT / "shared" / "api", S.out / "api"); shutil.copy(S.out / "api" / "package.json", S.out / "package.json"); (S.out / "api" / "package.json").unlink()
     (S.out / "api" / "_site.js").write_text(f'export default {json.dumps(S.slug)};\n')
