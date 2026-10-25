@@ -233,6 +233,11 @@ MOVING = [
     ("loading-unloading", "Loading & Unloading", "Already have a truck or trailer? Our crew loads it fast or unloads it at the other end."),
     ("office-moving", "Office Moving", "Desks, chairs, boxes and standard office furniture moved for small offices and home offices."),
     ("small-moves", "Small Moves", "A couch, a bed, a studio or just a few boxes? A small, careful crew gets it moved."),
+    ("furniture-pickup-delivery", "Furniture Pickup & Delivery", "Bought furniture on Facebook Marketplace or OfferUp? We pick it up and deliver it to your door."),
+    ("furniture-delivery", "Furniture Delivery", "New furniture from a local store or a friend, delivered and set up where you want it."),
+    ("couch-pickup-delivery", "Couch Pickup & Delivery", "Couches and sectionals picked up and delivered, wrapped and protected the whole way."),
+    ("single-item-moving", "Single Item Moving", "Just one big item? One piece of furniture moved across town without paying for a full move."),
+    ("small-furniture-moves", "Small Furniture Moves", "A few pieces of furniture moved between homes, rooms or storage units."),
 ]
 MOVING_TIERS = [(2, "$150", "$450"), (3, "$175", "$525"), (4, "$200", "$600")]
 MOVING_NOTE = "Junk Junkies Texas provides basic household and furniture moving only. We do not move pianos, heavy safes or other extremely heavy specialty items."
@@ -291,7 +296,8 @@ def moving_home(S):
 <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">{moving_cards(S, MOVING_PATH + "#moving-pricing")}</div>
 <div class="mt-8">{moving_note_box()}</div></div></section>
 {full_service_section(S)}
-{labor_only_section(S)}"""
+{labor_only_section(S)}
+{furniture_section(S)}"""
 
 def moving_teaser(S):
     if not S.is_hq: return ""
@@ -323,6 +329,18 @@ def full_service_section(S):
 {moving_price_block(S)}
 <div class="mt-8 flex flex-wrap gap-3"><a href="#quote" class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition">Get a Moving Quote</a><a href="tel:{c['phone_tel']}" class="rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-8 py-4 transition">Call or Text {c['phone_display']}</a></div></div></section>"""
 
+def furniture_section(S):
+    c = S.c
+    return f"""<section id="furniture-pickup-delivery" class="py-20 border-t border-line"><div class="max-w-6xl mx-auto px-5 grid lg:grid-cols-2 gap-10 items-center">
+<div class="rounded-3xl overflow-hidden border border-line"><img src="/assets/moving/furniture-pickup-delivery-photo.webp" alt="Furniture wrapped and ready for pickup and delivery in Spring, TX" width="900" height="900" loading="lazy" class="w-full h-auto"></div>
+<div><p class="text-xs font-semibold tracking-widest uppercase text-ember mb-4">Furniture pickup &amp; delivery</p>
+<h2 class="display text-4xl md:text-5xl font-extrabold leading-tight mb-5">Furniture Pickup &amp; Delivery in Spring, TX</h2>
+<p class="text-bone/70 text-lg mb-5">Need furniture picked up from Facebook Marketplace, OfferUp, a local store, or another home? Junk Junkies Texas offers affordable furniture pickup and delivery in Spring, Klein, Humble, and The Woodlands, TX.</p>
+<p class="display text-2xl md:text-3xl font-extrabold text-ember mb-5">Few-item pickups starting at $125&ndash;$275.</p>
+<p class="text-bone/70 text-lg mb-5">Text pictures to <a class="text-ember font-semibold" href="sms:{c['phone_tel']}">346-413-9644</a> for an exact price.</p>
+<p class="inline-block rounded-full border border-ember/50 bg-ember/10 text-ember font-semibold px-5 py-2 mb-6">10% Senior &amp; Veteran Discounts Available</p>
+<div class="flex flex-wrap gap-3"><a href="#quote" class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition">Get a Quote</a><a href="sms:{c['phone_tel']}" class="rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-8 py-4 transition">Text Pictures</a></div></div></div></section>"""
+
 def moving_page(S):
     c = S.c; path = MOVING_PATH
     title = "Moving Company in Spring, TX | Local Movers | Junk Junkies Texas"
@@ -348,6 +366,7 @@ def moving_page(S):
 <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-5">{moving_cards(S)}</div></div></section>
 {full_service_section(S)}
 {labor_only_section(S)}
+{furniture_section(S)}
 <section class="py-16 bg-slate2 border-y border-line"><div class="max-w-5xl mx-auto px-5"><h2 class="display text-3xl font-extrabold mb-3">Moving services in Spring, Klein, The Woodlands and Humble</h2><p class="text-bone/60 mb-6">Our Spring location provides moving services throughout:</p><ul class="flex flex-wrap gap-2 mb-8 not-prose">{moving_areas_chips()}</ul>
 <p class="text-bone/70 mb-6">Local movers in Spring TX, movers in Klein TX, moving services in The Woodlands and moving services in Humble TX: if you are nearby, call or text and we will confirm your date.</p>{moving_note_box()}
 <div class="mt-8 flex flex-wrap gap-3"><a href="#quote" class="rounded-full bg-ember hover:bg-emberDark text-ink font-bold px-8 py-4 transition">Schedule Your Move</a><a href="/services/" class="rounded-full border border-bone/25 hover:border-bone/60 font-semibold px-8 py-4 transition">Junk removal services</a></div></div></section>
