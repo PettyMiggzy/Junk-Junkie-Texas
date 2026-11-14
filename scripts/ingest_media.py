@@ -7,7 +7,7 @@ from pathlib import Path
 from PIL import Image
 
 SRC = Path(sys.argv[1]); ROOT = Path(__file__).resolve().parent.parent
-SITES = ["spring", "tomball", "cypress", "college-station"]
+SITES = ["spring", "tomball", "cypress", "college-station", "new-caney"]
 JR, LM, FR, DR = "Junk Removal", "Local Moving", "Furniture Removal", "Debris Removal"
 D = {
  JR: "Loaded up and hauled away in one trip. We sweep up when we are done.",

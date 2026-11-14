@@ -1,4 +1,4 @@
-# Junk Junkies Texas: 4 sites, 1 codebase
+# Junk Junkies Texas: 5 sites, 1 codebase
 
 | Site | Cities | Config |
 |---|---|---|
@@ -6,6 +6,7 @@
 | Tomball | Tomball, Magnolia, Pinehurst | `sites/tomball.json` |
 | Cypress | Cypress, Jersey Village, Hockley | `sites/cypress.json` |
 | College Station | College Station, Bryan, Navasota | `sites/college-station.json` |
+| New Caney | New Caney, Porter, Splendora, Kingwood | `sites/new-caney.json` (domain still a placeholder) |
 
 All sites: (346) 413-9644, forms to junkjunkiestexas@gmail.com.
 
@@ -36,7 +37,7 @@ For each site: Add New Project > this repo > Framework **Other** > Root Director
 - Hero photo reel: add JPG/WEBP files to `data/<site>/reel/` and rebuild.
 
 ## Hosting status
-- Vercel projects: `junkjunkies-spring`, `junkjunkies-tomball`, `junkjunkies-cypress`, `junkjunkies-college-station` (root dir `dist/<site>`, production branch `main`).
+- Vercel projects: `junkjunkies-spring`, `junkjunkies-tomball`, `junkjunkies-cypress`, `junkjunkies-college-station`, `junkjunkies-new-caney` (not created yet) (root dir `dist/<site>`, production branch `main`).
 - Shared Neon database `junkjunkies` (limited role `junkjunkies_app`); every job row has a `site` column. One Blob store per project.
 - `DATABASE_URL`, `CREW_PIN`, `BLOB_READ_WRITE_TOKEN` are set in each Vercel project. `GOOGLE_PLACES_KEY` is set on all projects; `GOOGLE_PLACE_ID` is set on Spring (ChIJt1oNIK6RSYYRSdYZxMjE2tk). Tomball, Cypress and College Station need their own Place IDs once those Google profiles exist.
 - `junkjunkiestexas.com` is intentionally NOT attached yet (live WordPress site).

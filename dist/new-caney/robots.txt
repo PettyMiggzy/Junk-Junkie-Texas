@@ -1,0 +1,7 @@
+User-agent: *
+Allow: /
+Disallow: /crew/
+Disallow: /api/
+Disallow: /admin/
+
+Sitemap: https://junkjunkiesnewcaney.com/sitemap.xml

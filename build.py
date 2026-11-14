@@ -35,7 +35,7 @@ def cross_site_redirects(S):
     own = {str(p.relative_to(S.out)) for p in S.out.rglob("*")} if S.out.exists() else set()
     out = []
     for slug, cfg in SITES.items():
-        if slug == S.slug: continue
+        if slug == S.slug or cfg.get("domain_is_placeholder"): continue   # a domain that is not live yet must not receive redirects
         for city in cfg["cities"]:
             if any(city in n for n in own): continue          # never hijack a page this site really has
             for short in ("/" + city, "/" + city + "/"):      # bare "/tomball" -> that city's page

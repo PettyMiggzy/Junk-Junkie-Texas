@@ -183,5 +183,30 @@
     -86.3744
    ]
   ]
+ },
+ "new-caney": {
+  "name": "Junk Junkies Texas Junk Removal New Caney",
+  "cities": [
+   [
+    "New Caney",
+    30.1588,
+    -95.2113
+   ],
+   [
+    "Porter",
+    30.1177,
+    -95.2394
+   ],
+   [
+    "Splendora",
+    30.2327,
+    -95.1599
+   ],
+   [
+    "Kingwood",
+    30.0499,
+    -95.1889
+   ]
+  ]
  }
 }

@@ -3,8 +3,8 @@
    Needs the admin PIN (same one as the dashboard). */
 (() => {
   const root = document.getElementById('crmApp'); if (!root) return;
-  const SITES = { spring: 'Spring', tomball: 'Tomball', cypress: 'Cypress', 'college-station': 'College Station', indiana: 'Indiana', florida: 'Florida' };
-  const BIZ = { spring: 'Junk Junkies Texas Junk Removal Spring', tomball: 'Junk Junkies Texas Junk Removal Tomball', cypress: 'Junk Junkies Texas Junk Removal Cypress', 'college-station': 'Junk Junkies Texas Junk Removal College Station', indiana: 'Junk Junkies Indiana Junk Removal Indianapolis', florida: 'Junk Junkies' };
+  const SITES = { spring: 'Spring', tomball: 'Tomball', cypress: 'Cypress', 'college-station': 'College Station', 'new-caney': 'New Caney', indiana: 'Indiana', florida: 'Florida' };
+  const BIZ = { spring: 'Junk Junkies Texas Junk Removal Spring', tomball: 'Junk Junkies Texas Junk Removal Tomball', cypress: 'Junk Junkies Texas Junk Removal Cypress', 'college-station': 'Junk Junkies Texas Junk Removal College Station', 'new-caney': 'Junk Junkies Texas Junk Removal New Caney', indiana: 'Junk Junkies Indiana Junk Removal Indianapolis', florida: 'Junk Junkies' };
   const REVIEW = { indiana: 'https://search.google.com/local/writereview?placeid=ChIJR9GXKjKaGicRM3HzbjWXhoE' };
   const ORDER = ['new', 'contacted', 'quoted', 'booked', 'done', 'lost'];
   const STATUS = { new: 'New', contacted: 'Contacted', quoted: 'Quoted', booked: 'Booked', done: 'Done', lost: 'Lost' };

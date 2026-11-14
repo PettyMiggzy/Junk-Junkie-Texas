@@ -6,6 +6,7 @@ export const BIZ = {
   tomball: { name: 'Junk Junkies Texas Junk Removal Tomball', phone: '(346) 413-9644', domain: 'junkjunkiestomball.com' },
   cypress: { name: 'Junk Junkies Texas Junk Removal Cypress', phone: '(346) 413-9644', domain: 'junkjunkiescypress.com' },
   'college-station': { name: 'Junk Junkies Texas Junk Removal College Station', phone: '(346) 413-9644', domain: 'junkjunkiescollegestation.com' },
+  'new-caney': { name: 'Junk Junkies Texas Junk Removal New Caney', phone: '(346) 413-9644', domain: 'junkjunkiesnewcaney.com' },
   indiana: { name: 'Junk Junkies Indiana Junk Removal Indianapolis', phone: '(317) 637-8807', domain: 'www.junkjunkiesindiana.com' },
   florida: { name: 'Junk Junkies', phone: '(346) 413-9644', domain: 'junkjunkiestexas.com' }
 };
