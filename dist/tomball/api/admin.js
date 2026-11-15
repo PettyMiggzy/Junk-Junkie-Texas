@@ -17,7 +17,7 @@ export default async function handler(req, res) {
         FROM jobs GROUP BY site ORDER BY site`;
       const jobs = await sql`SELECT id, site, created_at, service, city, area, description, before_url, after_url, hidden, gbp_status, crew_name, status FROM jobs ORDER BY created_at DESC LIMIT 150`;
       const leads = await sql`SELECT id, site, created_at, name, phone, email, service, city, zip, message, photos FROM leads ORDER BY created_at DESC LIMIT 100`;
-      const gbp = {}; for (const s of ['spring', 'tomball', 'cypress', 'college-station', 'indiana']) gbp[s] = gbpConfigured(s);
+      const gbp = {}; for (const s of ['spring', 'tomball', 'cypress', 'college-station', 'new-caney', 'indiana']) gbp[s] = gbpConfigured(s);
       const crew = await sql`SELECT id, code, name, active, created_at FROM crew_codes ORDER BY active DESC, created_at DESC`;
       return res.status(200).json({ stats, jobs, leads, crew, gbp, reviews: !!(process.env.GOOGLE_PLACES_KEY && process.env.GOOGLE_PLACE_ID) });
     }

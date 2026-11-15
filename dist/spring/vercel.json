@@ -131,6 +131,66 @@
       "permanent": true
     },
     {
+      "source": "/new-caney",
+      "destination": "https://junkjunkiesnewcaney.com/new-caney-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/new-caney/",
+      "destination": "https://junkjunkiesnewcaney.com/new-caney-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/:path(.*new-caney.*)",
+      "destination": "https://junkjunkiesnewcaney.com/:path",
+      "permanent": true
+    },
+    {
+      "source": "/porter",
+      "destination": "https://junkjunkiesnewcaney.com/porter-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/porter/",
+      "destination": "https://junkjunkiesnewcaney.com/porter-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/:path(.*porter.*)",
+      "destination": "https://junkjunkiesnewcaney.com/:path",
+      "permanent": true
+    },
+    {
+      "source": "/splendora",
+      "destination": "https://junkjunkiesnewcaney.com/splendora-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/splendora/",
+      "destination": "https://junkjunkiesnewcaney.com/splendora-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/:path(.*splendora.*)",
+      "destination": "https://junkjunkiesnewcaney.com/:path",
+      "permanent": true
+    },
+    {
+      "source": "/kingwood",
+      "destination": "https://junkjunkiesnewcaney.com/kingwood-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/kingwood/",
+      "destination": "https://junkjunkiesnewcaney.com/kingwood-junk-removal/",
+      "permanent": true
+    },
+    {
+      "source": "/:path(.*kingwood.*)",
+      "destination": "https://junkjunkiesnewcaney.com/:path",
+      "permanent": true
+    },
+    {
       "source": "/tomball",
       "destination": "https://junkjunkiestomball.com/tomball-junk-removal/",
       "permanent": true

@@ -5,7 +5,7 @@ import { bizOf, linkFor, newToken, docNumber, cleanItems, totals, paidSum, pct, 
 
 const STATUSES = ['new', 'contacted', 'quoted', 'booked', 'done', 'lost'];
 const SOURCES = ['website', 'ad', 'phone', 'referral', 'other'];
-const SITES = ['spring', 'tomball', 'cypress', 'college-station', 'indiana', 'florida'];
+const SITES = ['spring', 'tomball', 'cypress', 'college-station', 'new-caney', 'indiana', 'florida'];
 const LOST = ['', 'price', 'no response', 'went elsewhere', 'not ready', 'outside area', 'other'];
 const money = v => { if (v === '' || v == null) return null; const n = Number(String(v).replace(/[$,\s]/g, '')); return Number.isFinite(n) && n >= 0 && n < 1e7 ? Math.round(n * 100) / 100 : undefined; };
 const day = v => { if (v === '' || v == null) return null; return /^\d{4}-\d{2}-\d{2}$/.test(String(v)) && !isNaN(Date.parse(v)) ? String(v) : undefined; };
